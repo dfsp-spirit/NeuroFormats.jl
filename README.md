@@ -1,6 +1,6 @@
 # NeuroFormats.jl
 
-Handling of structural neuroimaging file formats for [Julia](https://julia-lang.org).
+Handling of structural neuroimaging file formats for [Julia](https://julialang.org).
 
 ## About
 
