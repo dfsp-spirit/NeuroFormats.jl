@@ -19,6 +19,11 @@ mutable struct CurvHeader
     values_per_vertex::Int32
 end
 
+mutable struct Curv
+    header::CurvHeader
+    data::Array{Float32, 1}
+end
+
 const CURV_MAGIC_HDR = 16777215
 const CURV_HDR_SIZE = sizeof(CurvHeader)
 
@@ -40,8 +45,17 @@ function readcurv_header(io::IO)
 end
 
 
-""" Read a Curv file. """
-function readcurv(file::AbstractString)
+""" 
+    readcurv(file)
+
+Read per-vertex data for brain meshes from the Curv file `file`. The file must be in FreeSurfer binary `Curv` format, like `lh.thickness`.
+
+# Examples
+```julia-repl
+julia> curv = readcurv("~/study1/subject1/surf/lh.thickness")
+```
+"""
+function readcurv(file::AbstractString, with_header::Bool=false)
     file_io = open(file, "r")
     header = readcurv_header(file_io)
     ArrayType = Array{Float32, 1}
@@ -51,6 +65,9 @@ function readcurv(file::AbstractString)
     read(file_io, Int(CURV_HDR_SIZE))
     per_vertex_data = read!(file_io, ArrayType(header.num_vertices))            
     close(file_io)
+
+    if with_header
+        return 
 end
 
 
