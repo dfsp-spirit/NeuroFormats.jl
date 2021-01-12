@@ -4,7 +4,7 @@
 
 module FreeSurfer
 
-using Mmap
+#using Mmap
 
 import Base.getindex, Base.size, Base.length
 export readcurv
