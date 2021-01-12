@@ -67,7 +67,10 @@ function readcurv(file::AbstractString, with_header::Bool=false)
     close(file_io)
 
     if with_header
-        return 
+        curv = Curv(header, per_vertex_data)
+        return curv
+    else
+        return per_vertex_data 
 end
 
 
