@@ -9,3 +9,9 @@ Some basic packages for reading neuroimaging data files are available from [Juli
 ## Installation and Usage
 
 This is still WIP. Please come back later.
+
+## Continuous integration results:
+
+[![Build Status](https://travis-ci.org/dfsp-spirit/NeuroFormats.jl.svg?branch=main)](https://travis-ci.org/dfsp-spirit/NeuroFormats.jl) Travis CI under Linux
+
+
