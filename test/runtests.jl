@@ -7,7 +7,7 @@ using Test
     curv = NeuroFormats.readcurv(CURV_LH_THICKNESS_FILE)
 
     # Header
-    @test length(curv.header) == 4
+    @test Base.length(curv.header) == 4
   
     # Content
     @test length(curv.data) == 149000

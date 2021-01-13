@@ -32,9 +32,12 @@ function interprete_fs_int3(b1::UInt8, b2::UInt8, b3::UInt8)
 end
 
 
+
+
+
 """ Read header from a Curv file """
 function readcurv_header(io::IO)
-    header = read(io, CurvHeader)
+    header = read!(io, Vector{CurvHeader}(undef, 1))[1]
     curv_magic = interprete_fs_int3(header.curv_magic_b1, header.curv_magic_b2, header.curv_magic_b3)
     if curv_magic != CURV_MAGIC_HDR
         error("This is not a binary FreeSurfer Curv file: header magic code mismatch.")
