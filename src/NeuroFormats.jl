@@ -4,7 +4,7 @@ module NeuroFormats
 #using LinearAlgebra
 #using Reexport
 
-import Base.getindex, Base.size, Base.length
+import Base.getindex, Base.size, Base.length, Base.reinterpret
 export readcurv
 
 
@@ -26,19 +26,17 @@ const CURV_MAGIC_HDR = 16777215
 const CURV_HDR_SIZE = sizeof(CurvHeader)
 
 
-""" Interprete 3 single-byte unsigned integers as a single integer, as used in several FreeSurfer file formats. """
-function interprete_fs_int3(b1::UInt8, b2::UInt8, b3::UInt8)
-    reinterprete(Int32, (b1 << 16 + b2 << 8 + b3))
+""" Interpret 3 single-byte unsigned integers as a single integer, as used in several FreeSurfer file formats. """
+function interpret_fs_int3(b1::UInt8, b2::UInt8, b3::UInt8)
+    reinterpret(Int, b1 << 16 + b2 << 8 + b3)
 end
-
-
 
 
 
 """ Read header from a Curv file """
 function readcurv_header(io::IO)
-    header = read!(io, Vector{CurvHeader}(undef, 1))[1]
-    curv_magic = interprete_fs_int3(header.curv_magic_b1, header.curv_magic_b2, header.curv_magic_b3)
+    header = CurvHeader(read(io,UInt8), read(io,UInt8), read(io,UInt8), read(io,Int32), read(io,Int32), read(io,Int32))
+    curv_magic = interpret_fs_int3(header.curv_magic_b1, header.curv_magic_b2, header.curv_magic_b3)
     if curv_magic != CURV_MAGIC_HDR
         error("This is not a binary FreeSurfer Curv file: header magic code mismatch.")
     end
