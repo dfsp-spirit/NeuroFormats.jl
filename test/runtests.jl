@@ -6,7 +6,7 @@ import Base.length, Base.maximum
 @testset "NeuroFormats.jl" begin
     
     CURV_LH_THICKNESS_FILE = joinpath(dirname(@__FILE__), "data/subjects_dir/subject1/surf/lh.thickness")
-    curv = NeuroFormats.readcurv(CURV_LH_THICKNESS_FILE)
+    curv = readcurv(CURV_LH_THICKNESS_FILE)
 
     # Header
     @test length(curv.header) == 4
