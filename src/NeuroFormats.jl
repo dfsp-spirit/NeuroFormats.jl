@@ -29,8 +29,8 @@ const CURV_HDR_SIZE = sizeof(CurvHeader)
 
 """ Interpret 3 single-byte unsigned integers as a single integer, as used in several FreeSurfer file formats. """
 function interpret_fs_int3(b1::UInt8, b2::UInt8, b3::UInt8)
-    @printf("b1=%d, b2=%d, b4=%d\n", b1, b2, b3);
-    reinterpret(Int, b1 << 16 + b2 << 8 + b3)
+    #@printf("b1=%d, b2=%d, b4=%d\n", b1, b2, b3);
+    reinterpret(Int64, b1 << 16 + b2 << 8 + b3)
 end
 
 
