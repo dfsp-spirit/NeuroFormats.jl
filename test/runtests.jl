@@ -25,13 +25,15 @@ function get_testdata_dir()
 end
 
 
-@testset "NeuroFormats.jl" begin
+@testset "fs_curv.jl" begin
     
     CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
     curv = readcurv(CURV_LH_THICKNESS_FILE, with_header = true)
 
     # Header
-    #@test curv.header.magic == 16777215
+    @test curv.header.curv_magic_b1 == 0xff
+    @test curv.header.curv_magic_b2 == 0xff
+    @test curv.header.curv_magic_b3 == 0xff
     @test curv.header.num_vertices == 149244
     @test curv.header.num_faces == 298484
     @test curv.header.values_per_vertex == 1

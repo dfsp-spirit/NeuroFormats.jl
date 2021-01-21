@@ -27,22 +27,12 @@ const CURV_MAGIC_HDR = 16777215::Int64
 const CURV_HDR_SIZE = sizeof(CurvHeader)
 
 
-""" Interpret 3 single-byte unsigned integers as a single integer, as used in several FreeSurfer file formats. """
-function interpret_fs_int3(b1::UInt8, b2::UInt8, b3::UInt8)
-    @printf("b1=%d, b2=%d, b3=%d (types: %s, %s, %s)\n", b1, b2, b3, typeof(b1), typeof(b2), typeof(b1));
-    fsint = reinterpret(Int64, b1 << 16 + b2 << 8 + b3)
-    fsint
-end
-
-
-
 """ Read header from a Curv file """
 function readcurv_header(io::IO)
     header = CurvHeader(UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), hton(read(io,Int32)), hton(read(io,Int32)), hton(read(io,Int32)))
-    #curv_magic = interpret_fs_int3(header.curv_magic_b1, header.curv_magic_b2, header.curv_magic_b3)
-    #if curv_magic != CURV_MAGIC_HDR
-    #    error("This is not a binary FreeSurfer Curv file: header magic code mismatch.")
-    #end
+    if !(header.curv_magic_b1 == 0xff && header.curv_magic_b2 == 0xff && header.curv_magic_b3 == 0xff)
+        error("This is not a binary FreeSurfer Curv file: header magic code mismatch.")
+    end
     header
 end
 
