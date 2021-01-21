@@ -3,11 +3,26 @@ using Test
 
 import Base.length, Base.maximum, Base.minimum, Base.fieldcount
 
+
+""" Unit testing helper function to find test data dir.
+
+    This is required because during tests, the base dir seems to be <package/test>, while it is <package> in the standard REPL.
+"""
+function get_testdata_dir()
+    if isdir("data/subjects_dir")
+        return joinpath(dirname(@__FILE__), "data/")
+    elseif isdir("test/data/subjects_dir")
+        return joinpath(dirname(@__FILE__), "test/data/")
+    else
+        error("Could not determine test data directory from current working directory.")
+    end
+    nothing
+end
+
+
 @testset "NeuroFormats.jl" begin
     
-    #file = joinpath(dirname(@__FILE__), "test/data/subjects_dir/subject1/surf/lh.thickness")
-
-    CURV_LH_THICKNESS_FILE = joinpath(dirname(@__FILE__), "data/subjects_dir/subject1/surf/lh.thickness")
+    CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
     curv = readcurv(CURV_LH_THICKNESS_FILE, with_header = true)
 
     # Header

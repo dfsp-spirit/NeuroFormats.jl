@@ -61,9 +61,10 @@ function readcurv(file::AbstractString; with_header::Bool=false)
     file_io = open(file, "r")
     header = readcurv_header(file_io)
     
-    seekstart(file_io)
-    read(file_io, Int(CURV_HDR_SIZE))
-    per_vertex_data = zeros(header.num_vertices)            
+    @printf("Loaded curv header with data for %d vertices, now at fh position %d.\n", header.num_vertices, Base.position(file_io))
+    per_vertex_data = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices))
+    per_vertex_data .= ntoh.(per_vertex_data)
+              
     close(file_io)
 
     if with_header
