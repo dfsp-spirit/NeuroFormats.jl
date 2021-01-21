@@ -3,6 +3,11 @@ using Test
 
 import Base.length, Base.maximum, Base.minimum, Base.fieldcount
 
+# The easiest way to run these tests with the current version of your code
+# seems to be the following one:
+# - start a JULIA interpreter, then:
+# - run: `using Pkg; Pkg.test("NeuroFormats");` 
+
 
 """ Unit testing helper function to find test data dir.
 
