@@ -25,7 +25,7 @@ function get_testdata_dir()
 end
 
 
-@testset "fs_curv.jl" begin
+@testset "fs_curv.jl: read curv with header" begin
     
     CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
     curv = readcurv(CURV_LH_THICKNESS_FILE, with_header = true)
@@ -43,3 +43,16 @@ end
     @assert minimum(curv.data) == 0.0
     @assert maximum(curv.data) == 5.0
 end
+
+
+@testset "fs_curv.jl: read curv without header" begin
+    
+    CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
+    curv_data = readcurv(CURV_LH_THICKNESS_FILE, with_header = false)
+  
+    # Content
+    @test length(curv_data) == 149244
+    @assert minimum(curv_data) == 0.0
+    @assert maximum(curv_data) == 5.0
+end
+
