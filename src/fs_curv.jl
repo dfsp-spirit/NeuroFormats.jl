@@ -3,8 +3,8 @@ module FreeSurfer
 
 using Printf
 
-import Base.getindex, Base.size, Base.length, Base.reinterpret, Base.hton
-export read_curv
+import Base.getindex, Base.size, Base.length, Base.reinterpret, Base.hton, Base.ntoh
+export read_curv, write_curv
 
 """ Models the header section of a file in Curv format. """
 mutable struct CurvHeader
@@ -51,8 +51,9 @@ function read_curv(file::AbstractString; with_header::Bool=false)
     file_io = open(file, "r")
     header = read_curv_header(file_io)
     
-    per_vertex_data = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices))
+    per_vertex_data::Vector{Float32} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices))
     per_vertex_data .= ntoh.(per_vertex_data)
+    #per_vertex_data = convert(Vector{Float32}, per_vertex_data)
               
     close(file_io)
 
@@ -64,5 +65,36 @@ function read_curv(file::AbstractString; with_header::Bool=false)
     end
 end
 
+
+"""
+    write_curv(file::AbstractString, curv_data::Array{Float32, 1})
+
+Write a numeric vector to a binary file in FreeSurfer Curv format. The data will be coverted to Float32.
+
+# Examples
+```julia-repl
+julia> write_curv("~/study1/subject1/surf/lh.thickness", convert(Array{Float32}, zeros(100)))
+```
+"""
+function write_curv(file::AbstractString, curv_data::Vector{<:Number})
+    curv_data = convert(Vector{Float32}, curv_data)
+    header = CurvHeader(0xff, 0xff, 0xff, length(curv_data), 0, 1)
+    file_io =  open(file, "w")
+    
+    # Write header
+    write(file_io, ntoh(header.curv_magic_b1))
+    write(file_io, ntoh(header.curv_magic_b2))
+    write(file_io, ntoh(header.curv_magic_b3))
+    write(file_io, ntoh(header.num_faces))
+    write(file_io, ntoh(header.num_vertices))
+    write(file_io, ntoh(header.values_per_vertex))
+
+    # Write data
+    for idx in eachindex(curv_data)
+        write(file_io, ntoh(curv_data[idx]))
+    end
+
+    close(file_io) 
+end
 
 end # module
