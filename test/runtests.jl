@@ -28,7 +28,7 @@ end
 @testset "fs_curv.jl: read curv with header" begin
     
     CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
-    curv = readcurv(CURV_LH_THICKNESS_FILE, with_header = true)
+    curv = read_curv(CURV_LH_THICKNESS_FILE, with_header = true)
 
     # Header
     @test curv.header.curv_magic_b1 == 0xff
@@ -48,7 +48,7 @@ end
 @testset "fs_curv.jl: read curv without header" begin
     
     CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
-    curv_data = readcurv(CURV_LH_THICKNESS_FILE, with_header = false)
+    curv_data = read_curv(CURV_LH_THICKNESS_FILE, with_header = false)
   
     # Content
     @test length(curv_data) == 149244

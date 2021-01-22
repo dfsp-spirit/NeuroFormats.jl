@@ -1,14 +1,12 @@
 
 module FreeSurfer
 
-#using LinearAlgebra
-#using Reexport
 using Printf
 
 import Base.getindex, Base.size, Base.length, Base.reinterpret, Base.hton
-export readcurv, curv_header
+export read_curv
 
-
+""" Models the header section of a file in Curv format. """
 mutable struct CurvHeader
     curv_magic_b1::UInt8
     curv_magic_b2::UInt8
@@ -18,6 +16,8 @@ mutable struct CurvHeader
     values_per_vertex::Int32
 end
 
+
+""" Models the structure of a file in Curv format. """
 mutable struct Curv
     header::CurvHeader
     data::Array{Float32, 1}
@@ -28,7 +28,7 @@ const CURV_HDR_SIZE = sizeof(CurvHeader)
 
 
 """ Read header from a Curv file """
-function readcurv_header(io::IO)
+function read_curv_header(io::IO)
     header = CurvHeader(UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), hton(read(io,Int32)), hton(read(io,Int32)), hton(read(io,Int32)))
     if !(header.curv_magic_b1 == 0xff && header.curv_magic_b2 == 0xff && header.curv_magic_b3 == 0xff)
         error("This is not a binary FreeSurfer Curv file: header magic code mismatch.")
@@ -44,14 +44,13 @@ Read per-vertex data for brain meshes from the Curv file `file`. The file must b
 
 # Examples
 ```julia-repl
-julia> curv = readcurv("~/study1/subject1/surf/lh.thickness")
+julia> curv = read_curv("~/study1/subject1/surf/lh.thickness")
 ```
 """
-function readcurv(file::AbstractString; with_header::Bool=false)
+function read_curv(file::AbstractString; with_header::Bool=false)
     file_io = open(file, "r")
-    header = readcurv_header(file_io)
+    header = read_curv_header(file_io)
     
-    @printf("Loaded curv header with data for %d vertices, now at fh position %d.\n", header.num_vertices, Base.position(file_io))
     per_vertex_data = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices))
     per_vertex_data .= ntoh.(per_vertex_data)
               

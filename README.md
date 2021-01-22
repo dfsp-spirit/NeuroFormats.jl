@@ -23,9 +23,8 @@ This is a very early package version, please keep in mind that the API is not ve
 ```julia
 using NeuroFormats
 curv_file = "path/to/subjects_dir/subjectX/surf/lh.thickness" # Adapt path to your data.
-thickness = readcurv(curv_file) # An Array{Float32, 1} with your cortical thickness data.
+thickness = read_curv(curv_file) # An Array{Float32, 1} with your cortical thickness data.
 ```
-
 
 ## Continuous integration results:
 
