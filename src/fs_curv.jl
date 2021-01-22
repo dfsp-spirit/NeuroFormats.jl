@@ -38,9 +38,11 @@ end
 
 
 """ 
-    readcurv(file)
+    read_curv(file::AbstractString; with_header::Bool=false)
 
 Read per-vertex data for brain meshes from the Curv file `file`. The file must be in FreeSurfer binary `Curv` format, like `lh.thickness`.
+
+See also: [`write_curv`](@ref)
 
 # Examples
 ```julia-repl
@@ -66,9 +68,14 @@ end
 
 
 """
-    write_curv(file::AbstractString, curv_data::Array{Float32, 1})
+    write_curv(file::AbstractString, curv_data::Vector{<:Number})
 
 Write a numeric vector to a binary file in FreeSurfer Curv format. The data will be coverted to Float32.
+
+This function is typically used to write surface-based neuroimaging data, like per-vertex cortical thickness
+measurements from a reconstructed brain mesh.
+
+See also: [`read_curv`](@ref)
 
 # Examples
 ```julia-repl
