@@ -57,7 +57,7 @@ end
 end
 
 
-#= @testset "fs_curv.jl: write and re-read curv file" begin
+@testset "fs_curv.jl: write and re-read curv file" begin
     
     CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
     curv_data = read_curv(CURV_LH_THICKNESS_FILE, with_header = false)
@@ -80,6 +80,5 @@ end
     @test maximum(curv_re.data) == maximum(curv_data)
     @test curv_re.data == curv_data
 end
-=#
 
 

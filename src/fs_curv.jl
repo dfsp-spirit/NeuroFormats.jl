@@ -51,9 +51,8 @@ function read_curv(file::AbstractString; with_header::Bool=false)
     file_io = open(file, "r")
     header = read_curv_header(file_io)
     
-    per_vertex_data::Vector{Float32} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices))
+    per_vertex_data::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices))
     per_vertex_data .= ntoh.(per_vertex_data)
-    #per_vertex_data = convert(Vector{Float32}, per_vertex_data)
               
     close(file_io)
 
@@ -85,8 +84,8 @@ function write_curv(file::AbstractString, curv_data::Vector{<:Number})
     write(file_io, ntoh(header.curv_magic_b1))
     write(file_io, ntoh(header.curv_magic_b2))
     write(file_io, ntoh(header.curv_magic_b3))
-    write(file_io, ntoh(header.num_faces))
     write(file_io, ntoh(header.num_vertices))
+    write(file_io, ntoh(header.num_faces))
     write(file_io, ntoh(header.values_per_vertex))
 
     # Write data
