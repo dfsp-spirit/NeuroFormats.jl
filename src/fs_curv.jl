@@ -1,10 +1,7 @@
 
-module FreeSurfer
-
-using Printf
 
 import Base.getindex, Base.size, Base.length, Base.reinterpret, Base.hton, Base.ntoh
-export read_curv, write_curv
+
 
 """ Models the header section of a file in Curv format. """
 mutable struct CurvHeader
@@ -103,4 +100,3 @@ function write_curv(file::AbstractString, curv_data::Vector{<:Number})
     close(file_io) 
 end
 
-end # module

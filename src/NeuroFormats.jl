@@ -3,7 +3,8 @@ module NeuroFormats
 
 using Reexport
 
-include("./fs_curv.jl")
+
+include("./FreeSurfer.jl")
 using .FreeSurfer
 @reexport using .FreeSurfer
 
