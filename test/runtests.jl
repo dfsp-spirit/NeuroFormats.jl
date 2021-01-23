@@ -93,3 +93,14 @@ end
 end
 
 
+@testset "fs_common.jl: interpret fs int24" begin
+
+    CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
+    curv = read_curv(CURV_LH_THICKNESS_FILE, with_header = true)
+    
+    int24 = interpret_fs_int24(curv.header.curv_magic_b1, curv.header.curv_magic_b2, curv.header.curv_magic_b3)
+    
+    @test int24 == 16777215
+end
+
+
