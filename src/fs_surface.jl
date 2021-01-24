@@ -18,6 +18,9 @@ mutable struct FsSurfaceHeader
     num_quad_faces_b3::UInt8
 end
 
+num_vertices(sh::FsSurfaceHeader) = interpret_fs_int24(sh.num_vertices_b1, sh.num_vertices_b2, sh.num_vertices_b3)
+num_faces(sh::FsSurfaceHeader) = interpret_fs_int24(sh.num_quad_faces_b1, sh.num_quad_faces_b2, sh.num_quad_faces_b3) * 2
+
 
 """ Models a trimesh. Vertices are defined by their xyz coordinates, and faces are given as indices into the vertex array. """
 struct BrainMesh
@@ -25,12 +28,18 @@ struct BrainMesh
     faces::Array{Int, 1}        # indices of the 3 vertices forming the face / polygon / triangle
 end
 
+num_vertices(bm::BrainMesh) = Base.length(bm.vertices) / 3
+num_faces(bm::BrainMesh) = Base.length(bm.faces) / 3
+
 
 """ Models FreeSurfer Surface file. """
 struct FsSurface
     header::FsSurfaceHeader
     mesh::BrainMesh
 end
+
+num_vertices(fsf::FsSurface) = num_vertices(fsf.mesh)
+num_faces(fsf::FsSurface) = num_faces(fsf.mesh)
 
 
 """ Read header from a FreeSurfer brain surface file """
