@@ -2,9 +2,11 @@ module FreeSurfer
 
 using Printf
 
-export read_fs_int24, interpret_fs_int24, read_curv, write_curv
+export read_fs_int24, interpret_fs_int24, read_curv, write_curv, read_fs_surface
 
+include("./utils.jl")
 include("./fs_common.jl")
 include("./fs_curv.jl")
+include("./fs_surface.jl")
 
 end
