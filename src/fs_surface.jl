@@ -1,31 +1,22 @@
 # Functions for reading FreeSurfer brain surface meshes.
 
 
-const TRIS_MAGIC_FILE_TYPE_NUMBER = 16777214;
+const TRIS_MAGIC_FILE_TYPE_NUMBER = 16777214
 
 """ Models the header section of a file in FreeSurfer Surface format. The files are big endian. """
 mutable struct FsSurfaceHeader
     magic_b1::UInt8
     magic_b2::UInt8
     magic_b3::UInt8
-    date_created::AbstractString
     info_line::AbstractString
-    num_vertices_b1::UInt8
-    num_vertices_b2::UInt8
-    num_vertices_b3::UInt8
-    num_quad_faces_b1::UInt8
-    num_quad_faces_b2::UInt8
-    num_quad_faces_b3::UInt8
+    num_vertices::Int32
+    num_faces::Int32
 end
-
-num_vertices(sh::FsSurfaceHeader) = interpret_fs_int24(sh.num_vertices_b1, sh.num_vertices_b2, sh.num_vertices_b3)
-num_faces(sh::FsSurfaceHeader) = interpret_fs_int24(sh.num_quad_faces_b1, sh.num_quad_faces_b2, sh.num_quad_faces_b3) * 2
-
 
 """ Models a trimesh. Vertices are defined by their xyz coordinates, and faces are given as indices into the vertex array. """
 struct BrainMesh
     vertices::Array{Float32, 1} # vertex xyz coord
-    faces::Array{Int, 1}        # indices of the 3 vertices forming the face / polygon / triangle
+    faces::Array{Int32, 1}        # indices of the 3 vertices forming the face / polygon / triangle
 end
 
 num_vertices(bm::BrainMesh) = Base.length(bm.vertices) / 3
@@ -43,15 +34,11 @@ num_faces(fsf::FsSurface) = num_faces(fsf.mesh)
 
 
 """ Read header from a FreeSurfer brain surface file """
-# TODO: This does not work, because there are 2 unknown-length strings representing the creation data and other arbitrary
-# info after the magic byte.
-# For fixed length strings, we could do: my_line = bytestring(readbytes(fh, 4)) I guess, but for variable length, idk.
+# For fixed length strings, we could do: my_line = bytestring(readbytes(fh, 4)) I guess.
 function read_fs_surface_header(io::IO)
     header = FsSurfaceHeader(UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))),
                              read_variable_length_string(io),
-                             read_variable_length_string(io),
-                             UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))),
-                             UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))))
+                             Int32(hton(read(io,Int32))), Int32(hton(read(io,Int32))))
     magic = interpret_fs_int24(header.magic_b1, header.magic_b2, header.magic_b3)
     if magic != TRIS_MAGIC_FILE_TYPE_NUMBER
         error("This is not a supported binary FreeSurfer Surface file: header magic code mismatch.")
@@ -74,14 +61,12 @@ function read_fs_surface(file::AbstractString)
     file_io = open(file, "r")
     header = read_fs_surface_header(file_io)
 
-    num_vertices = interpret_fs_int24(header.num_vertices_b1, header.num_vertices_b2, header.num_vertices_b3)
-    num_quad_faces = interpret_fs_int24(header.num_quad_faces_b1, header.num_quad_faces_b2, header.num_quad_faces_b3)
-    num_triangle_faces = num_quad_faces * 2
+    @printf("Reading %d vertices, %d faces.\n", header.num_vertices, header.num_faces)
     
-    vertices::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * num_vertices))
+    vertices::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices * 3))
     vertices .= ntoh.(vertices)
 
-    faces::Array{Int32} = reinterpret(Int32, read(file_io, sizeof(Int32) * num_triangle_faces))
+    faces::Array{Int32} = reinterpret(Int32, read(file_io, sizeof(Int32) * header.num_faces * 3))
     faces .= ntoh.(faces)
 
     close(file_io)
