@@ -19,8 +19,8 @@ num_faces(sh::FsSurfaceHeader) = sh.num_faces
 
 """ Models a trimesh. Vertices are defined by their xyz coordinates, and faces are given as indices into the vertex array. """
 struct BrainMesh
-    vertices::Array{Float32, 1}   # vertex xyz coords
-    faces::Array{Int32, 1}        # indices of the 3 vertices forming the face / polygon / triangle
+    vertices::Array{Float32, 2}   # vertex xyz coords
+    faces::Array{Int32, 2}        # indices of the 3 vertices forming the face / polygon / triangle
 end
 
 num_vertices(bm::BrainMesh) = Base.length(bm.vertices) / 3
@@ -67,11 +67,13 @@ function read_fs_surface(file::AbstractString)
 
     @printf("Reading %d vertices and %d faces at current position %d.\n", header.num_vertices, header.num_faces, Base.position(file_io))
     
-    vertices::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices * 3))
-    vertices .= ntoh.(vertices)
+    vertices_raw::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices * 3))
+    vertices_raw .= ntoh.(vertices_raw)
+    vertices::Array{Float32,2} = Base.reshape(vertices_raw, (Base.length(vertices_raw)÷3, 3))
 
-    faces::Array{Int32} = reinterpret(Int32, read(file_io, sizeof(Int32) * header.num_faces * 3))
-    faces .= ntoh.(faces)
+    faces_raw::Array{Int32,1} = reinterpret(Int32, read(file_io, sizeof(Int32) * header.num_faces * 3))
+    faces_raw .= ntoh.(faces_raw)
+    faces::Array{Int32,2} = Base.reshape(faces_raw, (Base.length(faces_raw)÷3, 3))
 
     close(file_io)
 
