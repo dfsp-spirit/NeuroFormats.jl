@@ -79,3 +79,16 @@ function read_fs_surface(file::AbstractString)
     surface 
 end
 
+
+""" Export a brain mesh to a Wavefront Object File. """
+function export_to_obj(file:: AbstractString, bm::BrainMesh)
+    open(file, "w") do f
+        for row in eachrow(bm.vertices)
+            write(f, "v ", row[1], " ", row[2], " ", row[3], "\n")
+        end
+        for row in eachrow(bm.faces)
+            write(f, "f ", row[1], " ", row[2], " ", row[3], "\n")
+        end
+    end
+end
+
