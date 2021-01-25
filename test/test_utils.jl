@@ -15,6 +15,12 @@
     description = read_variable_length_string(file_io)
     @test description == "Created by anonymous on a perfect day.\n\n"
 
+    @test Base.position(file_io) == (3 + Base.length(description))
+
+    Base.seek(file_io, 3)
+    description = read_variable_length_string(file_io, consume_zero = true)
+    @test description == "Created by anonymous on a perfect day.\n\n"
     @test Base.position(file_io) == (3 + Base.length(description) + 1)
+
     close(file_io)
 end
