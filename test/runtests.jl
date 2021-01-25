@@ -16,5 +16,5 @@ include("./utils_for_testing.jl")
 include("./test_utils.jl")
 include("./test_fs_common.jl")
 include("./test_fs_curv.jl")
-#include("./test_fs_surface.jl")
+include("./test_fs_surface.jl")
 

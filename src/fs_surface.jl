@@ -13,6 +13,10 @@ mutable struct FsSurfaceHeader
     num_faces::Int32
 end
 
+num_vertices(sh::FsSurfaceHeader) = sh.num_vertices
+num_faces(sh::FsSurfaceHeader) = sh.num_faces
+
+
 """ Models a trimesh. Vertices are defined by their xyz coordinates, and faces are given as indices into the vertex array. """
 struct BrainMesh
     vertices::Array{Float32, 1}   # vertex xyz coords
