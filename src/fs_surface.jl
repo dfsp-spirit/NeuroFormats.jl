@@ -15,7 +15,7 @@ end
 
 """ Models a trimesh. Vertices are defined by their xyz coordinates, and faces are given as indices into the vertex array. """
 struct BrainMesh
-    vertices::Array{Float32, 1} # vertex xyz coord
+    vertices::Array{Float32, 1}   # vertex xyz coords
     faces::Array{Int32, 1}        # indices of the 3 vertices forming the face / polygon / triangle
 end
 
@@ -36,9 +36,9 @@ num_faces(fsf::FsSurface) = num_faces(fsf.mesh)
 """ Read header from a FreeSurfer brain surface file """
 # For fixed length strings, we could do: my_line = bytestring(readbytes(fh, 4)) I guess.
 function read_fs_surface_header(io::IO)
-    header = FsSurfaceHeader(UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))),
+    header = FsSurfaceHeader(UInt8(hton(read(io, UInt8))), UInt8(hton(read(io, UInt8))), UInt8(hton(read(io, UInt8))),
                              read_variable_length_string(io),
-                             Int32(hton(read(io,Int32))), Int32(hton(read(io,Int32))))
+                             Int32(hton(read(io, Int32))), Int32(hton(read(io, Int32))))
     magic = interpret_fs_int24(header.magic_b1, header.magic_b2, header.magic_b3)
     if magic != TRIS_MAGIC_FILE_TYPE_NUMBER
         error("This is not a supported binary FreeSurfer Surface file: header magic code mismatch.")
@@ -61,7 +61,7 @@ function read_fs_surface(file::AbstractString)
     file_io = open(file, "r")
     header = read_fs_surface_header(file_io)
 
-    @printf("Reading %d vertices, %d faces.\n", header.num_vertices, header.num_faces)
+    @printf("Reading %d vertices and %d faces at current position %d.\n", header.num_vertices, header.num_faces, Base.position(file_io))
     
     vertices::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices * 3))
     vertices .= ntoh.(vertices)
