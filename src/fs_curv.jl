@@ -1,6 +1,6 @@
 
 
-import Base.getindex, Base.size, Base.length, Base.reinterpret, Base.hton, Base.ntoh
+import Base.getindex, Base.size, Base.length, Base.reinterpret, Base.hton, Base.ntoh, Base.show
 
 
 """ Models the header section of a file in Curv format. """
@@ -19,6 +19,8 @@ mutable struct Curv
     header::CurvHeader
     data::Array{Float32, 1}
 end
+
+Base.show(io::IO, x::Curv) = @printf("FreeSurfer per-vertex brain surface data for %d vertices.\n", Base.length(x.data))
 
 const CURV_MAGIC_HDR = 16777215::Int64
 const CURV_HDR_SIZE = sizeof(CurvHeader)

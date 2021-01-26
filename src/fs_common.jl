@@ -21,7 +21,7 @@ end
 
 """ Interpret 3 single-byte unsigned integers as a single integer, as used in several FreeSurfer file formats. """
 function interpret_fs_int24(b1::Integer, b2::Integer, b3::Integer)
-    @printf("b1=%d, b2=%d, b3=%d (types: %s, %s, %s)\n", b1, b2, b3, typeof(b1), typeof(b2), typeof(b1));
+    #@printf("b1=%d, b2=%d, b3=%d (types: %s, %s, %s)\n", b1, b2, b3, typeof(b1), typeof(b2), typeof(b1));
     fs_int24::Int64 = Int64(b1) << 16 + Int64(b2) << 8 + Int64(b3)
     return fs_int24
 end

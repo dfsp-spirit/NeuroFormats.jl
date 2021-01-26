@@ -1,5 +1,6 @@
 # Functions for reading FreeSurfer brain surface meshes.
 
+import Base.show
 
 const TRIS_MAGIC_FILE_TYPE_NUMBER = 16777214
 
@@ -25,7 +26,7 @@ end
 
 num_vertices(bm::BrainMesh) = Base.length(bm.vertices) / 3
 num_faces(bm::BrainMesh) = Base.length(bm.faces) / 3
-
+Base.show(io::IO, x::BrainMesh) = @printf("Brain mesh with %d vertices and %d faces.\n", num_vertices(x), num_faces(x))
 
 """ Models FreeSurfer Surface file. """
 struct FsSurface
@@ -35,6 +36,7 @@ end
 
 num_vertices(fsf::FsSurface) = num_vertices(fsf.mesh)
 num_faces(fsf::FsSurface) = num_faces(fsf.mesh)
+Base.show(io::IO, x::FsSurface) = @printf("FreeSurfer brain mesh with %d vertices and %d faces.\n", num_vertices(x), num_faces(x))
 
 
 """ Read header from a FreeSurfer brain surface file """
@@ -65,7 +67,7 @@ function read_fs_surface(file::AbstractString)
     file_io = open(file, "r")
     header = read_fs_surface_header(file_io)
 
-    @printf("Reading %d vertices and %d faces at current position %d.\n", header.num_vertices, header.num_faces, Base.position(file_io))
+    #@printf("Reading %d vertices and %d faces at current position %d.\n", header.num_vertices, header.num_faces, Base.position(file_io))
     
     vertices_raw::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices * 3))
     vertices_raw .= ntoh.(vertices_raw)
