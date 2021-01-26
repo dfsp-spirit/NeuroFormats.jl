@@ -13,6 +13,11 @@
     @test Base.length(surface.mesh.vertices) == 5 * 3
     @test Base.ndims(surface.mesh.faces) == 2
     @test Base.length(surface.mesh.faces) == 3 * 3
+
+    # Data, checks for row-major versus column-major issue
+    @test surface.mesh.faces[1,:] == Array{Int32,1}([0,1,3])
+    @test surface.mesh.faces[2,:] == Array{Int32,1}([1,3,4])
+    @test surface.mesh.faces[3,:] == Array{Int32,1}([2,2,2])
 end
 
 
