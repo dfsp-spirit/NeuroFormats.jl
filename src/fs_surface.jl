@@ -87,11 +87,13 @@ function export_to_obj(file:: AbstractString, bm::BrainMesh)
     open(file, "w") do f
         for row_idx in 1:size(bm.vertices, 1)
             row = bm.vertices[row_idx, :]
-            write(f, "v ", row[1], " ", row[2], " ", row[3], "\n")
+            vertex_rep = @sprintf("v %f %f %f\n", row[1], row[2], row[3])
+            write(f, vertex_rep)
         end
         for row_idx in 1:size(bm.faces, 1)
             row = bm.faces[row_idx, :]
-            write(f, "v ", row[1], " ", row[2], " ", row[3], "\n")
+            face_rep = @sprintf("f %d %d %d\n", row[1]+1, row[2]+1, row[3]+1)
+            write(f, face_rep)
         end
     end
 end
