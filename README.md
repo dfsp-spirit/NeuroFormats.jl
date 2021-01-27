@@ -4,7 +4,15 @@ Handling of structural neuroimaging file formats for [Julia](https://julialang.o
 
 ## About
 
-Some basic packages for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., NIFTI volume and GIFTI mesh support. In this NeuroFormats package, we will provide an API, similar to that of the [freesurferformats R package](https://github.com/dfsp-spirit/freesurferformats), for reading structural neuroimaging data files in Julia. The focus will be on surface-based data, as produced by [FreeSurfer](https://freesurfer.net).
+In the NeuroFormats package, we will provide an API, similar to that of the [freesurferformats R package](https://github.com/dfsp-spirit/freesurferformats), for reading structural neuroimaging data files in Julia. The focus will be on surface-based data, as produced by [FreeSurfer](https://freesurfer.net).
+
+Note that some basic packages for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., NIFTI volume and GIFTI mesh support. 
+
+## Features (WIP)
+
+* Read and write FreeSurfer per-vertex data in curv format (like `subject/surf/lh.thickness`)
+* Read brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`)
+
 
 ## Installation
 
@@ -16,16 +24,15 @@ cd NeuroFormats.jl
 julia --project=.
 ```
 
-## Usage
+## Usage Example
 
-This is a very early package version, please keep in mind that the API is not very stable yet. If you still want to give it a try already, here is what you can do:
+Please keep in mind that the API is not very stable yet. If you still want to give it a try already, here is an example for what you can do (after following the installation steps above):
 
 ```julia
 using NeuroFormats
 curv_file = "path/to/subjects_dir/subjectX/surf/lh.thickness" # Adapt path to your data.
-thickness = readcurv(curv_file) # An Array{Float32, 1} with your cortical thickness data.
+thickness = read_curv(curv_file) # An Array{Float32, 1} with your cortical thickness data.
 ```
-
 
 ## Continuous integration results:
 
