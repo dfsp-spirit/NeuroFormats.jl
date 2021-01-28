@@ -1,9 +1,6 @@
 # General utility functions used throughout the project.
 
 
-#https://stackoverflow.com/questions/61264545/read-null-terminated-string-from-byte-vector-in-julia
-
-
 """ Read a variable length, 0-terminated C-style string from a binary file. The trailing zero will be read if consume_zero is set, but not included in the result. """
 function read_variable_length_string(io::IO; consume_zero::Bool = false)
     res_string = ""
