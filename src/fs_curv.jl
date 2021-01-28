@@ -4,7 +4,7 @@ import Base.getindex, Base.size, Base.length, Base.reinterpret, Base.hton, Base.
 
 
 """ Models the header section of a file in Curv format. """
-mutable struct CurvHeader
+struct CurvHeader
     curv_magic_b1::UInt8
     curv_magic_b2::UInt8
     curv_magic_b3::UInt8
@@ -15,7 +15,7 @@ end
 
 
 """ Models the structure of a file in Curv format. """
-mutable struct Curv
+struct Curv
     header::CurvHeader
     data::Array{Float32, 1}
 end

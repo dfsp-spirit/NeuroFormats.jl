@@ -5,7 +5,7 @@ import Base.show
 const TRIS_MAGIC_FILE_TYPE_NUMBER = 16777214
 
 """ Models the header section of a file in FreeSurfer Surface format. The files are big endian. """
-mutable struct FsSurfaceHeader
+struct FsSurfaceHeader
     magic_b1::UInt8
     magic_b2::UInt8
     magic_b3::UInt8
