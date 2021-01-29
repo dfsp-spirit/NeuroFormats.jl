@@ -1,12 +1,22 @@
 # Functions for reading FreeSurfer annotation data.
 
-using DataFrames.DataFrame
+using Printf
+
+struct ColorTable
+    id::Array{Int32, 1}
+    name::Array{AbstractString, 1}
+    r::Array{Int32, 1}
+    g::Array{Int32, 1}
+    b::Array{Int32, 1}
+    a::Array{Int32, 1}
+    label::Array{Int32, 1}
+end
 
 
 struct FsAnnot
     vertex_indices::Array{Int32,1}
     vertex_labels::Array{Int32,1}
-    colortable::DataFrame
+    colortable::ColorTable
 end
 
 
@@ -32,7 +42,6 @@ function read_fs_annot(file::AbstractString)
             ctable_format_version = -num_colortable_entries
             if ctable_format_version == 2
                 num_colortable_entries = Int32(hton(read(file_io, Int32)))
-                # TODO: read new format colortable here
                 colortable = read_fs_annot_colortable(file_io, num_colortable_entries)
             else
                 error("Unsupported colortable format version, only version 2 is supported.")
@@ -46,6 +55,36 @@ function read_fs_annot(file::AbstractString)
 end
 
 
+""" Read colortable in new format from binary FreeSurfer annot file. """
 function read_fs_annot_colortable(file_io::IO, num_colortable_entries::Int32)
+    num_chars_orig_filename = Int32(hton(read(file_io, Int32)))
+    seek(file_io, Base.position(file_io) + num_chars_orig_filename) # skip over useless file name.
+    num_colortable_entries_duplicated = Int32(hton(read(file_io, Int32))) # number of entries is stored twice. don't ask me.
 
+    id::Array{Int32, 1} = zeros(num_colortable_entries)
+    name::Array{String, 1} = similar(id, String)
+    r::Array{Int32, 1} = zeros(num_colortable_entries)
+    g::Array{Int32, 1} = zeros(num_colortable_entries)
+    b::Array{Int32, 1} = zeros(num_colortable_entries)
+    a::Array{Int32, 1} = zeros(num_colortable_entries)
+    label::Array{Int32, 1} = zeros(num_colortable_entries)
+
+    for idx in [1:num_colortable_entries;]
+        id[idx] = Int32(hton(read(file_io, Int32))) + 1
+        entry_num_chars::Int32 = Int32(hton(read(file_io, Int32)))
+        name_bytes = Array{UInt8,1}(zeros(entry_num_chars))
+        readbytes!(file_io, name_bytes)
+        name[idx] = String(name_bytes)
+
+
+
+        # Read color information.
+        r[idx] = Int32(hton(read(file_io, Int32)))
+        g[idx] = Int32(hton(read(file_io, Int32)))
+        b[idx] = Int32(hton(read(file_io, Int32)))
+        a[idx] = Int32(hton(read(file_io, Int32)))
+        label[idx] = r[idx] + g[idx]*2^8 + b[idx]*2^16 + a[idx]*2^24
+    end
+    ct = ColorTable(id, name, r, g, b, a, label)
+    return ct
 end
