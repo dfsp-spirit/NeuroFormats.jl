@@ -75,8 +75,9 @@ function read_fs_annot_colortable(file_io::IO, num_colortable_entries::Int32)
         name_bytes = Array{UInt8,1}(zeros(entry_num_chars))
         readbytes!(file_io, name_bytes)
         name[idx] = String(name_bytes)
-
-
+        if(Base.endswith(name[idx], "\0")) # strip trailing "\0"
+            name[idx] = name[idx][1:(Base.length(name[idx])-1)]
+        end
 
         # Read color information.
         r[idx] = Int32(hton(read(file_io, Int32)))
