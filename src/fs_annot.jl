@@ -1,7 +1,6 @@
 # Functions for reading FreeSurfer annotation data.
 
-using Printf
-
+""" Models the colortable included in a FreeSurfer annotation. """
 struct ColorTable
     id::Array{Int32, 1}
     name::Array{AbstractString, 1}
@@ -13,6 +12,7 @@ struct ColorTable
 end
 
 
+""" Models a FreeSurfer brain surface parcellation from an annot file. """
 struct FsAnnot
     vertex_indices::Array{Int32,1}
     vertex_labels::Array{Int32,1}
@@ -20,6 +20,16 @@ struct FsAnnot
 end
 
 
+"""
+    read_fs_annot(file::AbstractString)
+
+Read a FreeSurfer brain parcellation from an annot file. A brain parcellation divides the cortex into a set of
+non-overlapping regions, based on a brain atlas. FreeSurfer parcellations assign a region code and a color to
+each vertex of the mesh representing the reconstructed cortex.
+
+See also: [`read_surf`] to read the mesh that belongs the parcellation, and [`read_curv`] to read per-vertex
+data for the mesh or brain region vertices.
+"""
 function read_fs_annot(file::AbstractString)
     file_io = open(file, "r")
     num_vertices = Int32(hton(read(file_io, Int32)))
