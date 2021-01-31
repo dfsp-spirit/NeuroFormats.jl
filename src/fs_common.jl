@@ -9,7 +9,7 @@ function read_fs_int24(io::IO; endian::AbstractString = "little")
     end
 
     sub_values::Array{Int64,1} = zeros(3)
-    endian_func = (endian == "little" ? ltoh : ntoh)
+    endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
    
     b1::Int64 = Int64(endian_func(read(io, UInt8)))
     b2::Int64 = Int64(endian_func(read(io, UInt8)))

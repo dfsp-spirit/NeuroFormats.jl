@@ -84,17 +84,19 @@ end
 
 """ Export a brain mesh to a Wavefront Object File. """
 function export_to_obj(file:: AbstractString, bm::BrainMesh)
+    buffer::IOBuffer = IOBuffer()
     open(file, "w") do f
         for row_idx in 1:size(bm.vertices, 1)
             row = bm.vertices[row_idx, :]
             vertex_rep = @sprintf("v %f %f %f\n", row[1], row[2], row[3])
-            write(f, vertex_rep)
+            print(buffer, vertex_rep)
         end
         for row_idx in 1:size(bm.faces, 1)
             row = bm.faces[row_idx, :]
             face_rep = @sprintf("f %d %d %d\n", row[1]+1, row[2]+1, row[3]+1)
-            write(f, face_rep)
+            print(buffer, face_rep)
         end
+        write(f, String(take!(buffer)))
     end
 end
 
