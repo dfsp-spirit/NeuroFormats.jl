@@ -35,8 +35,7 @@ function read_fs_annot(file::AbstractString)
     num_vertices = Int32(hton(read(file_io, Int32)))
 
     # The data is saved as a vertex index followed by its label code. This is repeated for all vertices.
-    vertices_and_labels_raw::Array{Int32,1} = reinterpret(Int32, read(file_io, sizeof(Int32) * num_vertices * 2))
-    vertices_and_labels_raw .= ntoh.(vertices_and_labels_raw)
+    vertices_and_labels_raw = read_vector_endian(file_io, Int32, num_vertices * 2, endian="big")
 
     # Separate vertices from labels
     vertices = vertices_and_labels_raw[[1:2:Base.length(vertices_and_labels_raw);]]

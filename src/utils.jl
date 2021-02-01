@@ -35,7 +35,7 @@ end
 
 
 """ Read a vector of given length and type with specified endianness from a file. """
-function read_vector_endian(io::IO, T::Type, n::Int; endian="big")
+function read_vector_endian(io::IO, T::Type, n::Integer; endian="big")
     endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
     raw_data::Array{T,1} = reinterpret(T, read(io, sizeof(T) * n))
     raw_data .= endian_func.(raw_data)

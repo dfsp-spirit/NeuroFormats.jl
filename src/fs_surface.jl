@@ -67,8 +67,6 @@ function read_fs_surface(file::AbstractString)
     file_io = open(file, "r")
     header = read_fs_surface_header(file_io)
 
-    #vertices_raw::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices * 3))
-    #vertices_raw .= ntoh.(vertices_raw)
     vertices_raw = read_vector_endian(file_io, Float32, (header.num_vertices * 3), endian="big")
     vertices::Array{Float32,2} = Base.reshape(vertices_raw, (3, Base.length(vertices_raw)÷3))'
 

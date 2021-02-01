@@ -52,8 +52,7 @@ function read_curv(file::AbstractString; with_header::Bool=false)
     file_io = open(file, "r")
     header = read_curv_header(file_io)
     
-    per_vertex_data::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices))
-    per_vertex_data .= ntoh.(per_vertex_data)
+    per_vertex_data = read_vector_endian(file_io, Float32, header.num_vertices, endian="big")
               
     close(file_io)
 
@@ -74,7 +73,7 @@ Write a numeric vector to a binary file in FreeSurfer Curv format. The data will
 This function is typically used to write surface-based neuroimaging data, like per-vertex cortical thickness
 measurements from a reconstructed brain mesh.
 
-See also: [`read_curv`](@ref)
+See also: [`read_curv`]
 
 # Examples
 ```julia-repl
