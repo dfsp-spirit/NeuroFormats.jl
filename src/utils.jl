@@ -17,3 +17,19 @@ function read_variable_length_string(io::IO; consume_zero::Bool = false)
     end
     res_string
 end
+
+
+""" Read fixed length byte string from a stream. """
+function read_fixed_length_string(io::IO, num_chars::Integer; strip_trailing::Array{String,1}=["\0"])
+    str_bytes = Array{UInt8,1}(zeros(num_chars))
+    readbytes!(io, str_bytes)
+    str = String(str_bytes)
+    
+    for suffix in strip_trailing
+        if Base.endswith(str, suffix)
+                str = str[1:(Base.length(str) - Base.length(suffix))]
+        end
+    end
+    return str
+end
+
