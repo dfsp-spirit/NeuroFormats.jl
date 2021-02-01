@@ -21,12 +21,12 @@ struct DtiTrkHeader
     pad2::String # length 4 chars
     image_orientation_patient::Array{Float32,1} # length 6
     pad1::String # length 2 chars
-    invert_x::Uint8
-    invert_y::Uint8
-    invert_z::Uint8
-    swap_xy::Uint8
-    swap_yz::Uint8
-    swap_zx::Uint8
+    invert_x::UInt8
+    invert_y::UInt8
+    invert_z::UInt8
+    swap_xy::UInt8
+    swap_yz::UInt8
+    swap_zx::UInt8
     n_count::Int32 # number of tracks
     version::Int32 # file format version
     hdr_size::Int32 # size of header, for endianness checking. Must be 1000 if read with correct endian setting.
@@ -39,8 +39,8 @@ struct DtiTrkTrack
 end
 
 struct DtiTrk
-    header::TrkHeader
-    tracks::Array{DtiTrkTrack,1}
+    header::DtiTrkHeader
+#    tracks::Array{DtiTrkTrack,1}
 end
 
 
@@ -56,8 +56,11 @@ function read_trk(file::AbstractString)
     io = open(file, "r")
     header = read_trk_header(io, endian)
 
+    # TODO: read data
 
     close(io)
+    trk = DtiTrk(header)
+    return trk
 end
 
 
