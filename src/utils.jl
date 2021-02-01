@@ -33,3 +33,12 @@ function read_fixed_length_string(io::IO, num_chars::Integer; strip_trailing::Ar
     return str
 end
 
+
+""" Read a vector of given length and type with specified endianness from a file. """
+function read_vector_endian(io::IO, T::Type, n::Int; endian="big")
+    endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
+    raw_data::Array{T,1} = reinterpret(T, read(io, sizeof(T) * n))
+    raw_data .= endian_func.(raw_data)
+    return raw_data
+end
+
