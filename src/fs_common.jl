@@ -2,7 +2,7 @@
 
 import Base.hton, Base.ntoh
 
-
+""" Read 3 single-byte unsigned integers as a single integer from a stream. """
 function read_fs_int24(io::IO; endian::AbstractString = "little") 
     if ! (endian in ["little", "big"])
         error("Parameter 'endian' must be one of 'little' or 'big'.")

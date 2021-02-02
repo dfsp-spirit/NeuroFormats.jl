@@ -32,6 +32,8 @@ struct DtiTrkHeader
     hdr_size::Int32 # size of header, for endianness checking. Must be 1000 if read with correct endian setting.
 end
 
+
+""" Models a single track for a TRK file. """
 struct DtiTrkTrack
     point_coords::Array{Float32,2}
     point_scalars::Array{Float32,1}

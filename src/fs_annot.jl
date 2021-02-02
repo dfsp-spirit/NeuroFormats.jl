@@ -1,5 +1,6 @@
 # Functions for reading FreeSurfer annotation data.
 
+
 """ Models the colortable included in a FreeSurfer annotation. """
 struct ColorTable
     id::Array{Int32, 1}

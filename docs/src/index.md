@@ -8,5 +8,7 @@ CurrentModule = NeuroFormats
 ```
 
 ```@autodocs
-Modules = [NeuroFormats]
+Modules = [NeuroFormats, NeuroFormats.FreeSurfer, NeuroFormats.DTI]
+Private = false
+Order   = [:function, :type]
 ```
