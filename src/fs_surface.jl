@@ -80,7 +80,13 @@ function read_fs_surface(file::AbstractString)
 end
 
 
-""" Export a brain mesh to a Wavefront Object File. """
+"""
+    export_to_obj(file:: AbstractString, bm::BrainMesh)
+
+Export a brain mesh to a Wavefront Object File.
+
+Exporting to the popular OBJ format is useful for loading the mesh in 3D modeling or visualization applications, like Blender3D.
+"""
 function export_to_obj(file:: AbstractString, bm::BrainMesh)
     buffer::IOBuffer = IOBuffer()
     open(file, "w") do f
@@ -99,6 +105,10 @@ function export_to_obj(file:: AbstractString, bm::BrainMesh)
 end
 
 
-""" Export the mesh of a FreeSurfer surface to a Wavefront Object File. """
+"""
+    export_to_obj(file:: AbstractString, x::FsSurface)
+    
+Export the mesh of a FreeSurfer surface to a Wavefront Object File.
+"""
 export_to_obj(file:: AbstractString, x::FsSurface) = export_to_obj(file, x.mesh)
 

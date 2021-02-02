@@ -14,8 +14,8 @@ makedocs(;
         assets=String[],
     ),
     pages=[
-        "API docs" => "index.md",
         "Introduction" => "introduction.md",
+        "API docs" => "index.md",
     ],
 )
 
