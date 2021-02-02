@@ -41,11 +41,11 @@ Base.show(io::IO, x::FsSurface) = @printf("FreeSurfer brain mesh with %d vertice
 
 """ Read header from a FreeSurfer brain surface file """
 # For fixed length strings, we could do: my_line = bytestring(readbytes(fh, 4)) I guess.
-function read_fs_surface_header(io::IO)
+function _read_fs_surface_header(io::IO)
     header = FsSurfaceHeader(UInt8(hton(read(io, UInt8))), UInt8(hton(read(io, UInt8))), UInt8(hton(read(io, UInt8))),
                              read_variable_length_string(io),
                              Int32(hton(read(io, Int32))), Int32(hton(read(io, Int32))))
-    magic = interpret_fs_int24(header.magic_b1, header.magic_b2, header.magic_b3)
+    magic = _interpret_fs_int24(header.magic_b1, header.magic_b2, header.magic_b3)
     if magic != TRIS_MAGIC_FILE_TYPE_NUMBER
         error("This is not a supported binary FreeSurfer Surface file: header magic code mismatch.")
     end
@@ -65,12 +65,12 @@ julia> mesh = read_fs_surface("~/study1/subject1/surf/lh.white")
 """
 function read_fs_surface(file::AbstractString)
     file_io = open(file, "r")
-    header = read_fs_surface_header(file_io)
+    header = _read_fs_surface_header(file_io)
 
-    vertices_raw = read_vector_endian(file_io, Float32, (header.num_vertices * 3), endian="big")
+    vertices_raw = _read_vector_endian(file_io, Float32, (header.num_vertices * 3), endian="big")
     vertices::Array{Float32,2} = Base.reshape(vertices_raw, (3, Base.length(vertices_raw)÷3))'
 
-    faces_raw = read_vector_endian(file_io, Int32, header.num_faces * 3, endian="big")
+    faces_raw = _read_vector_endian(file_io, Int32, header.num_faces * 3, endian="big")
     faces::Array{Int32,2} = Base.reshape(faces_raw, (3, Base.length(faces_raw)÷3))'
 
     close(file_io)

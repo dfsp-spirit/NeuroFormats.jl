@@ -68,11 +68,11 @@ function read_trk(file::AbstractString)
                 track_point_coords = Base.reshape(zeros(Float32, num_points * 3), (3, num_points))' # gets filled below.
                 track_point_scalars = zeros(Float32, num_points * header.n_scalars) # gets filled below.
                 for point_idx in [1:num_points;]
-                    track_point_coords[point_idx,:] = read_vector_endian(io, Float32, 3, endian=endian)
+                    track_point_coords[point_idx,:] = _read_vector_endian(io, Float32, 3, endian=endian)
                     if header.n_scalars > 0
                         start_idx = point_idx * header.n_scalars - header.n_scalars + 1
                         end_idx = start_idx + header.n_scalars - 1
-                        track_point_scalars[start_idx:end_idx] = read_vector_endian(io, Float32, header.n_scalars, endian=endian)
+                        track_point_scalars[start_idx:end_idx] = _read_vector_endian(io, Float32, header.n_scalars, endian=endian)
                     else
                         track_point_scalars = Array{Float32, 1}()
                     end
@@ -83,7 +83,7 @@ function read_trk(file::AbstractString)
             end
 
             if header.n_properties > 0
-                track_properties = read_vector_endian(io, Float32, header.n_properties, endian=endian)
+                track_properties = _read_vector_endian(io, Float32, header.n_properties, endian=endian)
             else
                 track_properties = Array{Float32, 1}()
             end
@@ -101,20 +101,20 @@ end
 function read_trk_header(io::IO, endian::AbstractString)
     endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
     header = DtiTrkHeader(
-        read_fixed_length_string(io, 6),
-        read_vector_endian(io, Int16, 3, endian=endian),
-        read_vector_endian(io, Int32, 3, endian=endian),
-        read_vector_endian(io, Float32, 3, endian=endian),
+        _read_fixed_length_string(io, 6),
+        _read_vector_endian(io, Int16, 3, endian=endian),
+        _read_vector_endian(io, Int32, 3, endian=endian),
+        _read_vector_endian(io, Float32, 3, endian=endian),
         Int16(endian_func(read(io, Int16))), # n_scalars
-        read_fixed_length_string(io, 200), # scalar_names
+        _read_fixed_length_string(io, 200), # scalar_names
         Int16(endian_func(read(io, Int16))), # n_properties
-        read_fixed_length_string(io, 200), # property_names
-        Base.reshape(read_vector_endian(io, Float32, 16, endian=endian), (4, 4))', # vox2ras matrix
-        read_fixed_length_string(io, 444), # reserved
-        read_fixed_length_string(io, 4), # voxel_order
-        read_fixed_length_string(io, 4), # pad2
-        read_vector_endian(io, Float32, 6, endian=endian), # image_orientation_patient
-        read_fixed_length_string(io, 2), # pad1
+        _read_fixed_length_string(io, 200), # property_names
+        Base.reshape(_read_vector_endian(io, Float32, 16, endian=endian), (4, 4))', # vox2ras matrix
+        _read_fixed_length_string(io, 444), # reserved
+        _read_fixed_length_string(io, 4), # voxel_order
+        _read_fixed_length_string(io, 4), # pad2
+        _read_vector_endian(io, Float32, 6, endian=endian), # image_orientation_patient
+        _read_fixed_length_string(io, 2), # pad1
         UInt8(endian_func(read(io, UInt8))),
         UInt8(endian_func(read(io, UInt8))),
         UInt8(endian_func(read(io, UInt8))),

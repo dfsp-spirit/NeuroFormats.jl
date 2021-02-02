@@ -27,7 +27,7 @@ const CURV_HDR_SIZE = sizeof(CurvHeader)
 
 
 """ Read header from a Curv file """
-function read_curv_header(io::IO)
+function _read_curv_header(io::IO)
     header = CurvHeader(UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), hton(read(io,Int32)), hton(read(io,Int32)), hton(read(io,Int32)))
     if !(header.curv_magic_b1 == 0xff && header.curv_magic_b2 == 0xff && header.curv_magic_b3 == 0xff)
         error("This is not a binary FreeSurfer Curv file: header magic code mismatch.")
@@ -50,9 +50,9 @@ julia> curv = read_curv("~/study1/subject1/surf/lh.thickness")
 """
 function read_curv(file::AbstractString; with_header::Bool=false)
     file_io = open(file, "r")
-    header = read_curv_header(file_io)
+    header = _read_curv_header(file_io)
     
-    per_vertex_data = read_vector_endian(file_io, Float32, header.num_vertices, endian="big")
+    per_vertex_data = _read_vector_endian(file_io, Float32, header.num_vertices, endian="big")
               
     close(file_io)
 

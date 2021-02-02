@@ -20,7 +20,7 @@ end
 
 
 """ Read fixed length byte string from a stream. """
-function read_fixed_length_string(io::IO, num_chars::Integer; strip_trailing::Array{String,1}=["\0"])
+function _read_fixed_length_string(io::IO, num_chars::Integer; strip_trailing::Array{String,1}=["\0"])
     str_bytes = Array{UInt8,1}(zeros(num_chars))
     readbytes!(io, str_bytes)
     str = String(str_bytes)
@@ -35,7 +35,7 @@ end
 
 
 """ Read a vector of given length and type with specified endianness from a file. """
-function read_vector_endian(io::IO, T::Type, n::Integer; endian::AbstractString="big")
+function _read_vector_endian(io::IO, T::Type, n::Integer; endian::AbstractString="big")
     if ! (endian in ["little", "big"])
         error("Parameter 'endian' must be one of 'little' or 'big'.")
     end

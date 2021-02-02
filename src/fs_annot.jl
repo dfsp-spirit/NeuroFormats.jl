@@ -36,7 +36,7 @@ function read_fs_annot(file::AbstractString)
     num_vertices = Int32(hton(read(file_io, Int32)))
 
     # The data is saved as a vertex index followed by its label code. This is repeated for all vertices.
-    vertices_and_labels_raw = read_vector_endian(file_io, Int32, num_vertices * 2, endian="big")
+    vertices_and_labels_raw = _read_vector_endian(file_io, Int32, num_vertices * 2, endian="big")
 
     # Separate vertices from labels
     vertices = vertices_and_labels_raw[[1:2:Base.length(vertices_and_labels_raw);]]
@@ -52,7 +52,7 @@ function read_fs_annot(file::AbstractString)
             ctable_format_version = -num_colortable_entries
             if ctable_format_version == 2
                 num_colortable_entries = Int32(hton(read(file_io, Int32)))
-                colortable = read_fs_annot_colortable(file_io, num_colortable_entries)
+                colortable = _read_fs_annot_colortable(file_io, num_colortable_entries)
             else
                 error("Unsupported colortable format version, only version 2 is supported.")
             end
@@ -66,7 +66,7 @@ end
 
 
 """ Read colortable in new format from binary FreeSurfer annot file. """
-function read_fs_annot_colortable(file_io::IO, num_colortable_entries::Int32)
+function _read_fs_annot_colortable(file_io::IO, num_colortable_entries::Int32)
     num_chars_orig_filename = Int32(hton(read(file_io, Int32)))
     seek(file_io, Base.position(file_io) + num_chars_orig_filename) # skip over useless file name.
     num_colortable_entries_duplicated = Int32(hton(read(file_io, Int32))) # number of entries is stored twice. don't ask me.
@@ -82,7 +82,7 @@ function read_fs_annot_colortable(file_io::IO, num_colortable_entries::Int32)
     for idx in [1:num_colortable_entries;]
         id[idx] = Int32(hton(read(file_io, Int32))) + 1
         entry_num_chars::Int32 = Int32(hton(read(file_io, Int32)))
-        name[idx] = read_fixed_length_string(file_io, entry_num_chars)
+        name[idx] = _read_fixed_length_string(file_io, entry_num_chars)
 
         # Read color information.
         r[idx] = Int32(hton(read(file_io, Int32)))
