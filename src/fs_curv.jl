@@ -73,7 +73,7 @@ Write a numeric vector to a binary file in FreeSurfer Curv format. The data will
 This function is typically used to write surface-based neuroimaging data, like per-vertex cortical thickness
 measurements from a reconstructed brain mesh.
 
-See also: [`read_curv`]
+See also: [`read_curv`](@ref)
 
 # Examples
 ```julia-repl
