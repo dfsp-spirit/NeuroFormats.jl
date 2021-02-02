@@ -33,14 +33,14 @@ struct DtiTrkHeader
 end
 
 struct DtiTrkTrack
-    point_scalars::Array{Float64,1}
-    point_coords::Array{Float64,1}
-    track_properties::Array{Float64,1}
+    point_coords::Array{Float32,2}
+    point_scalars::Array{Float32,1}
+    track_properties::Array{Float32,1}
 end
 
 struct DtiTrk
     header::DtiTrkHeader
-#    tracks::Array{DtiTrkTrack,1}
+    tracks::Array{DtiTrkTrack,1}
 end
 
 
@@ -56,10 +56,42 @@ function read_trk(file::AbstractString)
     io = open(file, "r")
     header = read_trk_header(io, endian)
 
-    # TODO: read data
+    tracks = Array{DtiTrkTrack,1}(undef, header.n_count)
+    if header.n_count > 0
+        for track_idx in [1:header.n_count;]
+            num_points = Int32(endian_func(read(io, Int32)))
+            #@printf("Reading track %d of %d with %d points, %d scalars and %d properties.\n", track_idx, header.n_count, num_points, header.n_scalars, header.n_properties)
+            
+            if num_points > 0
+                track_point_coords = Base.reshape(zeros(Float32, num_points * 3), (3, num_points))' # gets filled below.
+                track_point_scalars = zeros(Float32, num_points * header.n_scalars) # gets filled below.
+                for point_idx in [1:num_points;]
+                    track_point_coords[point_idx,:] = read_vector_endian(io, Float32, 3, endian=endian)
+                    if header.n_scalars > 0
+                        start_idx = point_idx * header.n_scalars - header.n_scalars + 1
+                        end_idx = start_idx + header.n_scalars - 1
+                        track_point_scalars[start_idx:end_idx] = read_vector_endian(io, Float32, header.n_scalars, endian=endian)
+                    else
+                        track_point_scalars = Array{Float32, 1}()
+                    end
+                end
+            else
+                track_point_coords = Array{Float32, 2}()
+                track_point_scalars = Array{Float32, 1}()
+            end
+
+            if header.n_properties > 0
+                track_properties = read_vector_endian(io, Float32, header.n_properties, endian=endian)
+            else
+                track_properties = Array{Float32, 1}()
+            end
+            track = DtiTrkTrack(track_point_coords, track_point_scalars, track_properties)
+            tracks[track_idx] = track
+        end
+    end
 
     close(io)
-    trk = DtiTrk(header)
+    trk = DtiTrk(header, tracks)
     return trk
 end
 
@@ -91,6 +123,9 @@ function read_trk_header(io::IO, endian::AbstractString)
         Int32(endian_func(read(io, Int32))),
         Int32(endian_func(read(io, Int32)))
     )
+    if header.hdr_size != 1000
+        error("File not in TRK format")
+    end
     return header
 end
 
