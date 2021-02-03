@@ -23,5 +23,7 @@ include("./test_fs_annot.jl")
 
 # DTI tests
 include("./test_dti_trk.jl")
+include("./test_dti_tck.jl")
+
 
 
