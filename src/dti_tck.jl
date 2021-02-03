@@ -3,6 +3,7 @@
 struct DtiTck
     header::Dict{String, String}
     tracks::Array{Number,1}
+    #tracks::Array{DtiTrkTrack,1}
 end
 
 
@@ -19,6 +20,7 @@ function read_tck(file::AbstractString)
 
     dtype = (startswith(header["datatype"], "Float64") ? Float64 : Float32)
     data_offset::Int64 = parse(Int64, derived["data_offset"])
+    num_tracks::Int64 = parse(Int64, header["count"])
     dtype_bytes::Int64 = (dtype == Float64 ? 8 : 4)
     endian = derived["endian"]
     endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
@@ -28,10 +30,27 @@ function read_tck(file::AbstractString)
     seek(io, data_offset)
     track_vector_raw = _read_vector_endian(io, dtype, num_to_read, endian=endian)
 
-    tracks = track_vector_raw
-    # TODO: get that vector into more friendly form.
+    # Rows consisting of NaNs are track separators, and the final EOF row is all Inf.
+    track_matrix = Base.reshape(track_vector_raw, (3, Base.length(track_vector_raw)÷3))'
 
-    tck = DtiTck(header, tracks)
+    tracks = Array{DtiTrkTrack,1}()
+
+    for row_idx in 1:Base.size(track_matrix, 1)
+        if all(isinf(t) for t in track_matrix[row_idx,:])
+            print("End of track data reached, all sdone.")
+            break
+        end
+        if all(isnan(t) for t in track_matrix[row_idx,:])
+            print("Current track complete, adding to tracks.")
+        end
+    end
+
+    old_tracks = track_vector_raw
+
+    # TODO:Let's get that track vector into a friendly form: an Array{DtiTrkTrack,1}
+    
+
+    tck = DtiTck(header, old_tracks)
     return(tck)
 end
 
