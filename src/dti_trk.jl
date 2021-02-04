@@ -35,9 +35,9 @@ end
 
 """ Models a single track for a TRK file. """
 struct DtiTrkTrack
-    point_coords::Array{Float32,2}
-    point_scalars::Array{Float32,1}
-    track_properties::Array{Float32,1}
+    point_coords::Array{Float64,2}
+    point_scalars::Array{Float64,1}
+    track_properties::Array{Float64,1}
 end
 
 struct DtiTrk
@@ -50,6 +50,10 @@ end
     read_trk(file::AbstractString)
 
 Read DTI tracks from a file in the TRK format used by DiffusionToolkit and TrackVis.
+
+Returns a `DtiTrk` struct with fields `header`: a struct with file header data, and `tracks`: an `Array{DtiTrkTrack}`.
+
+See also: [`read_tck`](@ref) reads tracks from MRtrix3 files.
 """
 function read_trk(file::AbstractString)
     endian = get_trk_endianness(file)

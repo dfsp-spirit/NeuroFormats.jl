@@ -2,8 +2,7 @@
 
 struct DtiTck
     header::Dict{String, String}
-    tracks::Array{Number,1}
-    #tracks::Array{DtiTrkTrack,1}
+    tracks::Array{DtiTrkTrack,1}
 end
 
 
@@ -11,6 +10,10 @@ end
     read_tck(file::AbstractString)
 
 Read DTI tracks from a MRtrix3 file in TCK format.
+
+Returns a `DtiTck` struct with fields `header`: `Dict{String,String}` with file header data, and `tracks`: an `Array{DtiTrkTrack}`.
+
+See also: [`read_trk`](@ref) reads tracks from DiffusionToolkit files.
 """
 function read_tck(file::AbstractString)
 
@@ -32,25 +35,31 @@ function read_tck(file::AbstractString)
 
     # Rows consisting of NaNs are track separators, and the final EOF row is all Inf.
     track_matrix = Base.reshape(track_vector_raw, (3, Base.length(track_vector_raw)÷3))'
+    tracks = Array{DtiTrkTrack,1}(undef, num_tracks)
 
-    tracks = Array{DtiTrkTrack,1}()
+    current_track_point_coords = Array{dtype, 1}()
 
+    current_track_idx::Int64 = 1
     for row_idx in 1:Base.size(track_matrix, 1)
         if all(isinf(t) for t in track_matrix[row_idx,:])
-            print("End of track data reached, all sdone.")
+            # End of track data reached, all done.
             break
         end
+
         if all(isnan(t) for t in track_matrix[row_idx,:])
-            print("Current track complete, adding to tracks.")
+            # Current track complete, add to tracks
+            track_point_coords_matrix::Array{dtype, 2} = Base.reshape(current_track_point_coords, (3, Base.length(current_track_point_coords)÷3))'
+            track = DtiTrkTrack(track_point_coords_matrix, Array{dtype, 1}(), Array{dtype, 1}()) # TCK format supports no sclars or properties, they are in separate files.
+            tracks[current_track_idx] = track
+
+            current_track_idx += 1
+            current_track_point_coords = Array{dtype, 1}() # empty current matrix
+        else
+            append!(current_track_point_coords, track_matrix[row_idx,:]) # in track, just add current points coords.
         end
-    end
+    end    
 
-    old_tracks = track_vector_raw
-
-    # TODO:Let's get that track vector into a friendly form: an Array{DtiTrkTrack,1}
-    
-
-    tck = DtiTck(header, old_tracks)
+    tck = DtiTck(header, tracks)
     return(tck)
 end
 
@@ -59,6 +68,7 @@ struct TrkHeaderInfo
     header::Dict{String, String}
     derived::Dict{String, String}
 end
+
 
 """ 
     _read_tck_header(io::IO)

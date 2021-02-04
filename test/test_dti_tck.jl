@@ -12,5 +12,6 @@
     @test tck.header["count"] == "0000000003"
 
     # test data
+    @test Base.length(tck.tracks) == 3
 end
 
