@@ -16,4 +16,6 @@
     @test Base.length(regions(fs_annot)) == 36
     @test Base.length(region_vertices(fs_annot, "bankssts")) == 1722
     @test Base.length(vertex_regions(fs_annot)) == 149244
+
+    @test label_from_rgb(fs_annot.colortable.r[1], fs_annot.colortable.g[1], fs_annot.colortable.b[1]) == fs_annot.colortable.label[1]
 end

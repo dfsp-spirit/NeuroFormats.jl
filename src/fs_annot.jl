@@ -1,4 +1,4 @@
-# Functions for reading FreeSurfer annotation data.
+# Functions for reading FreeSurfer annotation data for brain surfaces.
 
 
 """ Models the brain region table included in a FreeSurfer annotation. Each entry describes a brain region. """
@@ -46,6 +46,9 @@ function region_vertices(annot::FsAnnot, region::String)
 end
 
 
+""" Compute the label from the color code of an FsAnnot brain region. """
+label_from_rgb(r::Integer, g::Integer, b::Integer, a::Integer=0) = r + g*2^8 + b*2^16 + a*2^24
+
 
 """
     read_fs_annot(file::AbstractString)
@@ -55,7 +58,7 @@ non-overlapping regions, based on a brain atlas. FreeSurfer parcellations assign
 each vertex of the mesh representing the reconstructed cortex.
 
 See also: [`read_fs_surface`](@ref) to read the mesh that belongs the parcellation, and [`read_curv`](@ref) to read per-vertex
-data for the mesh or brain region vertices. Also see the convenience functions [`regions`](@ref), [`region_vertices`](@ref) 
+data for the mesh or brain region vertices. Also see the convenience functions [`regions`](@ref), [`region_vertices`](@ref), [`label_from_rgb`](@ref) 
 and [`vertex_regions`](@ref) to work with `FsAnnot` structs.
 """
 function read_fs_annot(file::AbstractString)
