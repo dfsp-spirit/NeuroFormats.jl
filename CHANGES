@@ -3,13 +3,13 @@ NeuroFormats.jl Changes
 
 Version 0.2.0
 --------------
-- BREAKING: no longer exports `interpret_fs_int24` function. This function was exported by accident.
-- support reading the MRtrix TCK format: `read_tck`
-- support reading the TRK format used by the Diffusion Toolkit and TrackVis: `read_trk`
-- add introduction page to documentation, fix generation of API docs.
-
+- BREAKING: no longer exports `interpret_fs_int24` function. This function was exported by accident and it is very unlikely that people used it.
+- Support reading the MRtrix TCK format: function `read_tck`
+- Support reading the TRK format used by the Diffusion Toolkit and TrackVis: `read_trk`
+- Add introduction page to documentation, fix generation of API docs.
 
 
 Version 0.1.0
 --------------
-- support reading and writing FreeSurfer curv files: read_curv and write_curv
+- Initial release.
+- Support reading and writing FreeSurfer curv files: read_curv and write_curv

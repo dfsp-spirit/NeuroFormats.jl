@@ -17,13 +17,14 @@ include("./test_utils.jl")
 # FreeSurfer tests
 include("./test_fs_common.jl")
 include("./test_fs_curv.jl")
-include("./test_fs_surface.jl") # slow
+include("./test_fs_surface.jl")
 include("./test_fs_label.jl")
 include("./test_fs_annot.jl")
 
 # DTI tests
 include("./test_dti_trk.jl")
 include("./test_dti_tck.jl")
+
 
 
 

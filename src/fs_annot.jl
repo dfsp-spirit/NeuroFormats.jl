@@ -1,85 +1,111 @@
 # Functions for reading FreeSurfer annotation data.
 
 
-""" Models the colortable included in a FreeSurfer annotation. """
+""" Models the brain region table included in a FreeSurfer annotation. Each entry describes a brain region. """
 struct ColorTable
-    id::Array{Int32, 1}
+    id::Array{Int32, 1} # region index, not really needed. The label is relevant, see below.
     name::Array{AbstractString, 1}
     r::Array{Int32, 1}
     g::Array{Int32, 1}
     b::Array{Int32, 1}
     a::Array{Int32, 1}
-    label::Array{Int32, 1}
+    label::Array{Int32, 1}  # a unique label computed from r,g,b. Used in annot.vertex_labels to identify the region.
 end
 
 
 """ Models a FreeSurfer brain surface parcellation from an annot file. """
 struct FsAnnot
-    vertex_indices::Array{Int32,1}
+    vertex_indices::Array{Int32,1} # 0-based indices, not really needed.
     vertex_labels::Array{Int32,1}
     colortable::ColorTable
 end
+
+
+""" Return the brain region names of the surface annotation. """
+regions(annot::FsAnnot) = annot.colortable.name
+
+""" Compute the region names for all vertices. """
+function vertex_regions(annot::FsAnnot)
+    vrc = Array{String,1}(undef, Base.length(annot.vertex_indices))
+    for region in regions(annot)
+        region_idx = findfirst(x -> (x == region), annot.colortable.name)
+        region_label = annot.colortable.label[region_idx]
+        region_vertices = findall(region_label .== annot.vertex_labels)
+        vrc[region_vertices] .= region
+    end
+    return(vrc)
+end
+
+
+""" Get all vertices of a region. """
+function region_vertices(annot::FsAnnot, region::String)
+    region_idx = findfirst(x -> (x == region), annot.colortable.name)
+    region_label = annot.colortable.label[region_idx]
+    region_vertices = findall(region_label .== annot.vertex_labels)
+    return(region_vertices)
+end
+
 
 
 """
     read_fs_annot(file::AbstractString)
 
 Read a FreeSurfer brain parcellation from an annot file. A brain parcellation divides the cortex into a set of
-non-overlapping regions, based on a brain atlas. FreeSurfer parcellations assign a region code and a color to
+non-overlapping regions, based on a brain atlas. FreeSurfer parcellations assign a region label and a color to
 each vertex of the mesh representing the reconstructed cortex.
 
-See also: [`read_surf`] to read the mesh that belongs the parcellation, and [`read_curv`] to read per-vertex
+See also: [`read_fs_surface`](@ref) to read the mesh that belongs the parcellation, and [`read_curv`](@ref) to read per-vertex
 data for the mesh or brain region vertices.
 """
 function read_fs_annot(file::AbstractString)
     file_io = open(file, "r")
     num_vertices = Int32(hton(read(file_io, Int32)))
 
-    # The data is saved as a vertex index followed by its label code. This is repeated for all vertices.
+    # The data is saved as a vertex index followed by its label label. This is repeated for all vertices.
     vertices_and_labels_raw = _read_vector_endian(file_io, Int32, num_vertices * 2, endian="big")
 
     # Separate vertices from labels
     vertices = vertices_and_labels_raw[[1:2:Base.length(vertices_and_labels_raw);]]
     labels = vertices_and_labels_raw[[2:2:Base.length(vertices_and_labels_raw);]]
 
-    has_colortable = Int32(hton(read(file_io, Int32)))
-    if has_colortable == 1
-        num_colortable_entries = Int32(hton(read(file_io, Int32)))
-        if num_colortable_entries > 0
-            error("Old colortable format in annot files not supported yet. Please open an issue and attach a sample file if you need this.")
+    has_ColorTable = Int32(hton(read(file_io, Int32)))
+    if has_ColorTable == 1
+        num_ColorTable_entries = Int32(hton(read(file_io, Int32)))
+        if num_ColorTable_entries > 0
+            error("Old ColorTable format in annot files not supported yet. Please open an issue and attach a sample file if you need this.")
         else
-            # If num_colortable_entries is negative, it is a version code (actually, the abs value is the version).
-            ctable_format_version = -num_colortable_entries
+            # If num_ColorTable_entries is negative, it is a version label (actually, the abs value is the version).
+            ctable_format_version = -num_ColorTable_entries
             if ctable_format_version == 2
-                num_colortable_entries = Int32(hton(read(file_io, Int32)))
-                colortable = _read_fs_annot_colortable(file_io, num_colortable_entries)
+                num_ColorTable_entries = Int32(hton(read(file_io, Int32)))
+                ColorTable = _read_fs_annot_ColorTable(file_io, num_ColorTable_entries)
             else
-                error("Unsupported colortable format version, only version 2 is supported.")
+                error("Unsupported ColorTable format version, only version 2 is supported.")
             end
         end
     else
-        error("Annotation file does not contain a colortable.")
+        error("Annotation file does not contain a ColorTable.")
     end
-    fs_annot = FsAnnot(vertices, labels, colortable)
+    fs_annot = FsAnnot(vertices, labels, ColorTable)
     return(fs_annot)
 end
 
 
-""" Read colortable in new format from binary FreeSurfer annot file. """
-function _read_fs_annot_colortable(file_io::IO, num_colortable_entries::Int32)
+""" Read regiontable/ColorTable in new format from binary FreeSurfer annot file. """
+function _read_fs_annot_ColorTable(file_io::IO, num_ColorTable_entries::Int32)
     num_chars_orig_filename = Int32(hton(read(file_io, Int32)))
     seek(file_io, Base.position(file_io) + num_chars_orig_filename) # skip over useless file name.
-    num_colortable_entries_duplicated = Int32(hton(read(file_io, Int32))) # number of entries is stored twice. don't ask me.
+    num_ColorTable_entries_duplicated = Int32(hton(read(file_io, Int32))) # number of entries is stored twice. don't ask me.
 
-    id::Array{Int32, 1} = zeros(num_colortable_entries)
+    id::Array{Int32, 1} = zeros(num_ColorTable_entries)
     name::Array{String, 1} = similar(id, String)
-    r::Array{Int32, 1} = zeros(num_colortable_entries)
-    g::Array{Int32, 1} = zeros(num_colortable_entries)
-    b::Array{Int32, 1} = zeros(num_colortable_entries)
-    a::Array{Int32, 1} = zeros(num_colortable_entries)
-    label::Array{Int32, 1} = zeros(num_colortable_entries)
+    r::Array{Int32, 1} = zeros(num_ColorTable_entries)
+    g::Array{Int32, 1} = zeros(num_ColorTable_entries)
+    b::Array{Int32, 1} = zeros(num_ColorTable_entries)
+    a::Array{Int32, 1} = zeros(num_ColorTable_entries)
+    label::Array{Int32, 1} = zeros(num_ColorTable_entries)
 
-    for idx in [1:num_colortable_entries;]
+    for idx in [1:num_ColorTable_entries;]
         id[idx] = Int32(hton(read(file_io, Int32))) + 1
         entry_num_chars::Int32 = Int32(hton(read(file_io, Int32)))
         name[idx] = _read_fixed_length_string(file_io, entry_num_chars)
