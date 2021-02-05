@@ -24,7 +24,7 @@ end
 """ Return the brain region names of the surface annotation. """
 regions(annot::FsAnnot) = annot.colortable.name
 
-""" Compute the region names for all vertices. """
+""" Compute the region names for all vertices in an FsAnnot brain surface parcellation. """
 function vertex_regions(annot::FsAnnot)
     vrc = Array{String,1}(undef, Base.length(annot.vertex_indices))
     for region in regions(annot)
@@ -37,7 +37,7 @@ function vertex_regions(annot::FsAnnot)
 end
 
 
-""" Get all vertices of a region. """
+""" Get all vertices of a region in an FsAnnot brain surface parcellation. """
 function region_vertices(annot::FsAnnot, region::String)
     region_idx = findfirst(x -> (x == region), annot.colortable.name)
     region_label = annot.colortable.label[region_idx]
@@ -55,7 +55,8 @@ non-overlapping regions, based on a brain atlas. FreeSurfer parcellations assign
 each vertex of the mesh representing the reconstructed cortex.
 
 See also: [`read_fs_surface`](@ref) to read the mesh that belongs the parcellation, and [`read_curv`](@ref) to read per-vertex
-data for the mesh or brain region vertices.
+data for the mesh or brain region vertices. Also see the convenience functions [`regions`](@ref), [`region_vertices`](@ref) 
+and [`vertex_regions`](@ref) to work with `FsAnnot` structs.
 """
 function read_fs_annot(file::AbstractString)
     file_io = open(file, "r")
