@@ -12,9 +12,12 @@ Note that some basic packages for reading neuroimaging data files are available 
 ## Features
 
 * Read and write FreeSurfer per-vertex data in curv format (like `subject/surf/lh.thickness`): functions `read_curv()` and `write_curv()`
-* Read brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`): `read_fs_surface()`
-* Read FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_fs_label()`
-* Read FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_fs_annot()`
+* Read brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`): `read_surf()`
+* Read FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_label()`
+* Read FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_annot()`
+* Read DTI track data from MRtrix3 TCK files: `read_tck()`
+* Read DTI track data from DiffusionToolkit TRK files: `read_trk()`
+
 
 ## Installation
 
