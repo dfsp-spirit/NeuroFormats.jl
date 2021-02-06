@@ -13,7 +13,7 @@ using CSV
 using DataFrames
 
 """
-     read_fs_label(file::AbstractString)
+     read_label(file::AbstractString)
 
 Read a FreeSurfer ASCII label file and return the contents as a DataFrame. Both surface labels and volume labels are supported.
 
@@ -25,8 +25,10 @@ that if your label contains negative indices, it has to be a volume label.
     
 Note that we use surface label terminology in the code to refer to the fields, but what is called 'vertex_indices' below may mean
 'voxel_indices' in case of a volume label.
+
+Retunrs a `DataFrames.DataFrame`.
 """
-function read_fs_label(file::AbstractString)
+function read_label(file::AbstractString)
     # The first line is a comment, and the 2nd one contains a single number: the number of vertex lines following.
     csv_element_count_reader = CSV.File(file; header=["vertex_count"], delim=" ", ignorerepeated=true, skipto=2, limit=1, types=[Int32], comment="#")
     num_vertices = csv_element_count_reader[1][1] # first row, first column.

@@ -1,7 +1,8 @@
 # Functions for reading FreeSurfer annotation data for brain surfaces.
 
+import Base.show
 
-""" Models the brain region table included in a FreeSurfer annotation. Each entry describes a brain region. """
+""" Models the brain region table included in an [`FsAnnot`](@ref) FreeSurfer annotation. Each entry describes a brain region. """
 struct ColorTable
     id::Array{Int32, 1} # region index, not really needed. The label is relevant, see below.
     name::Array{AbstractString, 1}
@@ -20,11 +21,16 @@ struct FsAnnot
     colortable::ColorTable
 end
 
+Base.show(io::IO, x::FsAnnot) = @printf("Brain surface parcellation for %d vertices containing %d regions.\n", Base.length(x.vertex_indices), Base.length(x.colortable.id))
 
-""" Return the brain region names of the surface annotation. """
+""" Return the brain region names of the [`FsAnnot`](@ref) surface annotation. """
 regions(annot::FsAnnot) = annot.colortable.name
 
-""" Compute the region names for all vertices in an FsAnnot brain surface parcellation. """
+"""
+    vertex_regions(annot::FsAnnot)
+
+Compute the region names for all vertices in an [`FsAnnot`](@ref) brain surface parcellation.
+"""
 function vertex_regions(annot::FsAnnot)
     vrc = Array{String,1}(undef, Base.length(annot.vertex_indices))
     for region in regions(annot)
@@ -37,7 +43,11 @@ function vertex_regions(annot::FsAnnot)
 end
 
 
-""" Get all vertices of a region in an FsAnnot brain surface parcellation. """
+""" 
+    region_vertices(annot::FsAnnot, region::String)
+
+Get all vertices of a region in an [`FsAnnot`](@ref) brain surface parcellation. Returns an integer vector, the vertex indices.
+"""
 function region_vertices(annot::FsAnnot, region::String)
     region_idx = findfirst(x -> (x == region), annot.colortable.name)
     region_label = annot.colortable.label[region_idx]
@@ -46,22 +56,28 @@ function region_vertices(annot::FsAnnot, region::String)
 end
 
 
-""" Compute the label from the color code of an FsAnnot brain region. """
+"""
+    label_from_rgb(r::Integer, g::Integer, b::Integer, a::Integer=0)
+
+Compute the label from the color code of an [`FsAnnot`](@ref) brain region. Returns an integer, the label code.
+"""
 label_from_rgb(r::Integer, g::Integer, b::Integer, a::Integer=0) = r + g*2^8 + b*2^16 + a*2^24
 
 
 """
-    read_fs_annot(file::AbstractString)
+    read_annot(file::AbstractString)
 
 Read a FreeSurfer brain parcellation from an annot file. A brain parcellation divides the cortex into a set of
 non-overlapping regions, based on a brain atlas. FreeSurfer parcellations assign a region label and a color to
 each vertex of the mesh representing the reconstructed cortex.
 
-See also: [`read_fs_surface`](@ref) to read the mesh that belongs the parcellation, and [`read_curv`](@ref) to read per-vertex
+See also: [`read_surf`](@ref) to read the mesh that belongs the parcellation, and [`read_curv`](@ref) to read per-vertex
 data for the mesh or brain region vertices. Also see the convenience functions [`regions`](@ref), [`region_vertices`](@ref), [`label_from_rgb`](@ref) 
 and [`vertex_regions`](@ref) to work with `FsAnnot` structs.
+
+Returns an [`FsAnnot`](@ref) struct.
 """
-function read_fs_annot(file::AbstractString)
+function read_annot(file::AbstractString)
     file_io = open(file, "r")
     num_vertices = Int32(hton(read(file_io, Int32)))
 
@@ -82,7 +98,7 @@ function read_fs_annot(file::AbstractString)
             ctable_format_version = -num_ColorTable_entries
             if ctable_format_version == 2
                 num_ColorTable_entries = Int32(hton(read(file_io, Int32)))
-                ColorTable = _read_fs_annot_ColorTable(file_io, num_ColorTable_entries)
+                ColorTable = _read_annot_colortable(file_io, num_ColorTable_entries)
             else
                 error("Unsupported ColorTable format version, only version 2 is supported.")
             end
@@ -95,8 +111,8 @@ function read_fs_annot(file::AbstractString)
 end
 
 
-""" Read regiontable/ColorTable in new format from binary FreeSurfer annot file. """
-function _read_fs_annot_ColorTable(file_io::IO, num_ColorTable_entries::Int32)
+""" Read regiontable/colortable in new format from binary FreeSurfer annot file. """
+function _read_annot_colortable(file_io::IO, num_ColorTable_entries::Int32)
     num_chars_orig_filename = Int32(hton(read(file_io, Int32)))
     seek(file_io, Base.position(file_io) + num_chars_orig_filename) # skip over useless file name.
     num_ColorTable_entries_duplicated = Int32(hton(read(file_io, Int32))) # number of entries is stored twice. don't ask me.

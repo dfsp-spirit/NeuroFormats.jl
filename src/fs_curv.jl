@@ -39,7 +39,7 @@ end
 """ 
     read_curv(file::AbstractString; with_header::Bool=false)
 
-Read per-vertex data for brain meshes from the Curv file `file`. The file must be in FreeSurfer binary `Curv` format, like `lh.thickness`.
+Read per-vertex data for brain meshes from the Curv file `file`. The file must be in FreeSurfer binary `Curv` format, like `lh.thickness`. Returns an Array{Float32,1} with the data unless `with_header` is set, in which case a [`Curv`](@ref) struct is returned instead.
 
 See also: [`write_curv`](@ref)
 

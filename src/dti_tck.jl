@@ -1,17 +1,20 @@
 
+import Base.show
 
+""" Models a DTI TCK file. """
 struct DtiTck
     header::Dict{String, String}
-    tracks::Array{DtiTrkTrack,1}
+    tracks::Array{DtiTrack,1}
 end
 
+Base.show(io::IO, x::DtiTck) = @printf("MRtrix3 TCK data containing %d tracks.\n", Base.length(x.tracks))
 
 """
     read_tck(file::AbstractString)
 
 Read DTI tracks from a MRtrix3 file in TCK format.
 
-Returns a `DtiTck` struct with fields `header`: `Dict{String,String}` with file header data, and `tracks`: an `Array{DtiTrkTrack}`.
+Returns a [`DtiTck`](@ref) struct.
 
 See also: [`read_trk`](@ref) reads tracks from DiffusionToolkit files.
 """
@@ -35,7 +38,7 @@ function read_tck(file::AbstractString)
 
     # Rows consisting of NaNs are track separators, and the final EOF row is all Inf.
     track_matrix = Base.reshape(track_vector_raw, (3, Base.length(track_vector_raw)÷3))'
-    tracks = Array{DtiTrkTrack,1}(undef, num_tracks)
+    tracks = Array{DtiTrack,1}(undef, num_tracks)
 
     current_track_point_coords = Array{dtype, 1}()
 
@@ -49,7 +52,7 @@ function read_tck(file::AbstractString)
         if all(isnan(t) for t in track_matrix[row_idx,:])
             # Current track complete, add to tracks
             track_point_coords_matrix::Array{dtype, 2} = Base.reshape(current_track_point_coords, (3, Base.length(current_track_point_coords)÷3))'
-            track = DtiTrkTrack(track_point_coords_matrix, Array{dtype, 1}(), Array{dtype, 1}()) # TCK format supports no sclars or properties, they are in separate files.
+            track = DtiTrack(track_point_coords_matrix, Array{dtype, 1}(), Array{dtype, 1}()) # TCK format supports no sclars or properties, they are in separate files.
             tracks[current_track_idx] = track
 
             current_track_idx += 1

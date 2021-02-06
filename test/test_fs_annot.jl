@@ -4,7 +4,7 @@
 @testset "Read a FreeSurfer annotation" begin
     
     ANNOT_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/label/lh.aparc.annot")
-    fs_annot = read_fs_annot(ANNOT_FILE)
+    fs_annot = read_annot(ANNOT_FILE)
 
     @test Base.length(fs_annot.vertex_indices) == 149244
     @test Base.length(fs_annot.vertex_labels) == 149244

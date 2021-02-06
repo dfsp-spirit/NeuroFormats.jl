@@ -2,7 +2,7 @@
 @testset "fs_surface.jl: read brain mesh" begin
         
     BRAIN_MESH_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.tinysurface")
-    surface = read_fs_surface(BRAIN_MESH_FILE) # a mesh with 5 vertices and 3 faces.
+    surface = read_surf(BRAIN_MESH_FILE) # a mesh with 5 vertices and 3 faces.
 
     known_num_verts = 5
     known_num_faces = 3
@@ -26,9 +26,8 @@ end
 
 @testset "fs_surface.jl: export brain mesh to OBJ file" begin
        
-    #BRAIN_MESH_FILE = "test/data/subjects_dir/subject1/surf/lh.tinysurface"
     BRAIN_MESH_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.tinysurface")
-    surface = read_fs_surface(BRAIN_MESH_FILE) # a mesh with 5 vertices and 3 faces.
+    surface = read_surf(BRAIN_MESH_FILE) # a mesh with 5 vertices and 3 faces.
 
     tf = tempname()
     export_to_obj(tf, surface.mesh)

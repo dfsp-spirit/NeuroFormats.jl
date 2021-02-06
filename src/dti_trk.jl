@@ -1,7 +1,7 @@
 # Functions for reading DTI tracks in TRK format. Used by DiffusionToolkit and TrackVis.
 # See http://trackvis.org/docs/?subsect=fileformat for the spec.
 
-
+import Base.show
 using Printf
 
 
@@ -34,16 +34,19 @@ end
 
 
 """ Models a single track for a TRK file. """
-struct DtiTrkTrack
+struct DtiTrack
     point_coords::Array{Float64,2}
     point_scalars::Array{Float64,1}
     track_properties::Array{Float64,1}
 end
 
+""" Models a DTI TRK file. """
 struct DtiTrk
     header::DtiTrkHeader
-    tracks::Array{DtiTrkTrack,1}
+    tracks::Array{DtiTrack,1}
 end
+
+Base.show(io::IO, x::DtiTrk) = @printf("DiffusionToolkit TRK data containing %d tracks.\n", Base.length(x.tracks))
 
 
 """
@@ -51,18 +54,18 @@ end
 
 Read DTI tracks from a file in the TRK format used by DiffusionToolkit and TrackVis.
 
-Returns a `DtiTrk` struct with fields `header`: a struct with file header data, and `tracks`: an `Array{DtiTrkTrack}`.
+Returns a [`DtiTrk`](@ref) struct.
 
 See also: [`read_tck`](@ref) reads tracks from MRtrix3 files.
 """
 function read_trk(file::AbstractString)
-    endian = get_trk_endianness(file)
+    endian = _get_trk_endianness(file)
     endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
 
     io = open(file, "r")
     header = read_trk_header(io, endian)
 
-    tracks = Array{DtiTrkTrack,1}(undef, header.n_count)
+    tracks = Array{DtiTrack,1}(undef, header.n_count)
     if header.n_count > 0
         for track_idx in [1:header.n_count;]
             num_points = Int32(endian_func(read(io, Int32)))
@@ -91,7 +94,7 @@ function read_trk(file::AbstractString)
             else
                 track_properties = Array{Float32, 1}()
             end
-            track = DtiTrkTrack(track_point_coords, track_point_scalars, track_properties)
+            track = DtiTrack(track_point_coords, track_point_scalars, track_properties)
             tracks[track_idx] = track
         end
     end
@@ -137,7 +140,7 @@ end
 
 
 """ Checks endianness of a TRK file using hdr_size field, returns one of "little" or "big". """
-function get_trk_endianness(file::AbstractString)
+function _get_trk_endianness(file::AbstractString)
     file_io = open(file, "r")
 
     seek(file_io, 996)

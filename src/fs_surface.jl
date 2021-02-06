@@ -14,7 +14,10 @@ struct FsSurfaceHeader
     num_faces::Int32
 end
 
+""" Compute the number of vertices contained in an [`FsSurfaceHeader`](@ref) struct. """
 num_vertices(sh::FsSurfaceHeader) = sh.num_vertices
+
+""" Compute the number of faces contained in an [`FsSurfaceHeader`](@ref) struct. """
 num_faces(sh::FsSurfaceHeader) = sh.num_faces
 
 
@@ -24,7 +27,10 @@ struct BrainMesh
     faces::Array{Int32, 2}        # indices of the 3 vertices forming the face / polygon / triangle
 end
 
+""" Compute the number of vertices contained in a [`BrainMesh`](@ref) struct. """
 num_vertices(bm::BrainMesh) = Base.length(bm.vertices) / 3
+
+""" Compute the number of faces contained in a [`BrainMesh`](@ref) struct. """
 num_faces(bm::BrainMesh) = Base.length(bm.faces) / 3
 Base.show(io::IO, x::BrainMesh) = @printf("Brain mesh with %d vertices and %d faces.\n", num_vertices(x), num_faces(x))
 
@@ -34,14 +40,18 @@ struct FsSurface
     mesh::BrainMesh
 end
 
+""" Compute the number of vertices contained in an [`FsSurface`](@ref) struct. """
 num_vertices(fsf::FsSurface) = num_vertices(fsf.mesh)
+
+""" Compute the number of faces contained in an [`FsSurface`](@ref) struct. """
 num_faces(fsf::FsSurface) = num_faces(fsf.mesh)
+
 Base.show(io::IO, x::FsSurface) = @printf("FreeSurfer brain mesh with %d vertices and %d faces.\n", num_vertices(x), num_faces(x))
 
 
 """ Read header from a FreeSurfer brain surface file """
 # For fixed length strings, we could do: my_line = bytestring(readbytes(fh, 4)) I guess.
-function _read_fs_surface_header(io::IO)
+function _read_surf_header(io::IO)
     header = FsSurfaceHeader(UInt8(hton(read(io, UInt8))), UInt8(hton(read(io, UInt8))), UInt8(hton(read(io, UInt8))),
                              read_variable_length_string(io),
                              Int32(hton(read(io, Int32))), Int32(hton(read(io, Int32))))
@@ -54,18 +64,18 @@ end
 
 
 """ 
-    read_fs_surface(file::AbstractString)
+    read_surf(file::AbstractString)
 
-Read a brain surface model represented as a mesh from a file in FreeSurfer binary surface format. Such a file typically represents a single hemisphere.
+Read a brain surface model represented as a mesh from a file in FreeSurfer binary surface format. Such a file typically represents a single hemisphere. Returns an [`FsSurface`](@ref) struct.
 
 # Examples
 ```julia-repl
-julia> mesh = read_fs_surface("~/study1/subject1/surf/lh.white")
+julia> mesh = read_surf("~/study1/subject1/surf/lh.white")
 ```
 """
-function read_fs_surface(file::AbstractString)
+function read_surf(file::AbstractString)
     file_io = open(file, "r")
-    header = _read_fs_surface_header(file_io)
+    header = _read_surf_header(file_io)
 
     vertices_raw = _read_vector_endian(file_io, Float32, (header.num_vertices * 3), endian="big")
     vertices::Array{Float32,2} = Base.reshape(vertices_raw, (3, Base.length(vertices_raw)÷3))'
@@ -85,7 +95,7 @@ end
 
 Export a brain mesh to a Wavefront Object File.
 
-Use [`read_fs_surface`](@ref) to obtain a mesh to export. Exporting to the popular OBJ format is useful for loading the mesh in 3D modeling or visualization applications, like Blender3D.
+Use [`read_surf`](@ref) to obtain a mesh to export. Exporting to the popular OBJ format is useful for loading the mesh in 3D modeling or visualization applications, like Blender3D.
 """
 function export_to_obj(file:: AbstractString, bm::BrainMesh)
     buffer::IOBuffer = IOBuffer()
@@ -110,7 +120,7 @@ end
 
 Export the mesh of a FreeSurfer surface to a Wavefront Object File.
 
-Use [`read_fs_surface`](@ref) to obtain a mesh to export.
+Use [`read_surf`](@ref) to obtain a mesh to export.
 """
 export_to_obj(file:: AbstractString, x::FsSurface) = export_to_obj(file, x.mesh)
 
