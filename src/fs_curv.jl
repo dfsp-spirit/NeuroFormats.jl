@@ -47,7 +47,7 @@ See also: [`write_curv`](@ref)
 ```julia-repl
 julia> curv_file = joinpath(tdd(), "subjects_dir/subject1/surf/lh.thickness");
 julia> curv = read_curv(curv_file);
-julia> sum(curv)/length(curv)
+julia> sum(curv)/length(curv) # show mean cortical thickness
 ```
 """
 function read_curv(file::AbstractString; with_header::Bool=false)
