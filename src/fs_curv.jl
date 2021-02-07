@@ -4,7 +4,7 @@ import Base.getindex, Base.size, Base.length, Base.reinterpret, Base.hton, Base.
 
 
 """ Models the header section of a file in Curv format. """
-mutable struct CurvHeader
+struct CurvHeader
     curv_magic_b1::UInt8
     curv_magic_b2::UInt8
     curv_magic_b3::UInt8
@@ -15,7 +15,7 @@ end
 
 
 """ Models the structure of a file in Curv format. """
-mutable struct Curv
+struct Curv
     header::CurvHeader
     data::Array{Float32, 1}
 end
@@ -27,7 +27,7 @@ const CURV_HDR_SIZE = sizeof(CurvHeader)
 
 
 """ Read header from a Curv file """
-function read_curv_header(io::IO)
+function _read_curv_header(io::IO)
     header = CurvHeader(UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), UInt8(hton(read(io,UInt8))), hton(read(io,Int32)), hton(read(io,Int32)), hton(read(io,Int32)))
     if !(header.curv_magic_b1 == 0xff && header.curv_magic_b2 == 0xff && header.curv_magic_b3 == 0xff)
         error("This is not a binary FreeSurfer Curv file: header magic code mismatch.")
@@ -39,21 +39,22 @@ end
 """ 
     read_curv(file::AbstractString; with_header::Bool=false)
 
-Read per-vertex data for brain meshes from the Curv file `file`. The file must be in FreeSurfer binary `Curv` format, like `lh.thickness`.
+Read per-vertex data for brain meshes from the Curv file `file`. The file must be in FreeSurfer binary `Curv` format, like `lh.thickness`. Returns an Array{Float32,1} with the data unless `with_header` is set, in which case a [`Curv`](@ref) struct is returned instead.
 
 See also: [`write_curv`](@ref)
 
 # Examples
 ```julia-repl
-julia> curv = read_curv("~/study1/subject1/surf/lh.thickness")
+julia> curv_file = joinpath(tdd(), "subjects_dir/subject1/surf/lh.thickness");
+julia> curv = read_curv(curv_file);
+julia> sum(curv)/length(curv) # show mean cortical thickness
 ```
 """
 function read_curv(file::AbstractString; with_header::Bool=false)
     file_io = open(file, "r")
-    header = read_curv_header(file_io)
+    header = _read_curv_header(file_io)
     
-    per_vertex_data::Array{Float32,1} = reinterpret(Float32, read(file_io, sizeof(Float32) * header.num_vertices))
-    per_vertex_data .= ntoh.(per_vertex_data)
+    per_vertex_data = _read_vector_endian(file_io, Float32, header.num_vertices, endian="big")
               
     close(file_io)
 

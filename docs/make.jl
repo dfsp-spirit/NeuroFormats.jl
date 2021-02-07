@@ -1,8 +1,10 @@
+push!(LOAD_PATH, "../src/")
+
 using NeuroFormats
 using Documenter
 
 makedocs(;
-    modules=[NeuroFormats],
+    modules=[NeuroFormats, NeuroFormats.FreeSurfer, NeuroFormats.DTI],
     authors="Tim Schäfer <ts+code@rcmd.org> and contributors",
     repo="https://github.com/dfsp_spirit/NeuroFormats.jl/blob/{commit}{path}#L{line}",
     sitename="NeuroFormats.jl",
@@ -12,7 +14,8 @@ makedocs(;
         assets=String[],
     ),
     pages=[
-        "Home" => "index.md",
+        "Introduction" => "introduction.md",
+        "API docs" => "index.md",
     ],
 )
 
