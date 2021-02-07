@@ -29,6 +29,13 @@ cd NeuroFormats.jl
 julia --project=.
 ```
 
+## Documentation
+
+The documentation is included with the package and can be browsed online at juliahub. It is not repeated on this website. 
+
+Also keep in mind that you can get help on a function named `read_curv` from within Julia by typing `?read_curv`.
+
+
 ## Usage Example
 
 Please keep in mind that the API is not very stable yet. If you still want to give it a try already, here is an example for what you can do (after following the installation steps above):
@@ -39,6 +46,9 @@ curv_file = "path/to/subjects_dir/subjectX/surf/lh.thickness" # Adapt path to yo
 thickness = read_curv(curv_file) # An Array{Float32, 1} with your cortical thickness data.
 ```
 
+More examples can be found in the documentation, see above.
+
 ## Continuous integration results:
 
 [![Build Status](https://travis-ci.org/dfsp-spirit/NeuroFormats.jl.svg?branch=main)](https://travis-ci.org/dfsp-spirit/NeuroFormats.jl) Travis CI under Linux
+
