@@ -1,6 +1,5 @@
 # General utility functions used throughout the project.
 
-
 """ Read a variable length, 0-terminated C-style string from a binary file. The trailing zero will be read if consume_zero is set, but not included in the result. """
 function read_variable_length_string(io::IO; consume_zero::Bool = false)
     res_string = ""
@@ -31,6 +30,12 @@ function _read_fixed_length_string(io::IO, num_chars::Integer; strip_trailing::A
         end
     end
     return str
+end
+
+
+""" Get the path of the NeuroFormats test data directory. """
+function tdd()
+    joinpath(@__DIR__, "..", "test", "data")
 end
 
 

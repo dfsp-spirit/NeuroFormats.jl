@@ -70,7 +70,9 @@ Read a brain surface model represented as a mesh from a file in FreeSurfer binar
 
 # Examples
 ```julia-repl
-julia> mesh = read_surf("~/study1/subject1/surf/lh.white")
+julia> surf_file = joinpath(tdd(), "subjects_dir/subject1/surf/lh.white");
+julia> surf = read_surf(surf_file);
+julia> Base.size(surf.mesh.faces, 1) # Get face count.
 ```
 """
 function read_surf(file::AbstractString)

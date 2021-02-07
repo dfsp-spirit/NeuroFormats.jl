@@ -26,7 +26,15 @@ that if your label contains negative indices, it has to be a volume label.
 Note that we use surface label terminology in the code to refer to the fields, but what is called 'vertex_indices' below may mean
 'voxel_indices' in case of a volume label.
 
-Retunrs a `DataFrames.DataFrame`.
+Returns a `DataFrames.DataFrame`.
+
+# Examples
+```julia-repl
+julia> label_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.entorhinal_exvivo.label");
+julia> label = read_label(label_file);
+julia> sum(label[!, "value"])
+```
+
 """
 function read_label(file::AbstractString)
     # The first line is a comment, and the 2nd one contains a single number: the number of vertex lines following.

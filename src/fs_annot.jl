@@ -23,13 +23,32 @@ end
 
 Base.show(io::IO, x::FsAnnot) = @printf("Brain surface parcellation for %d vertices containing %d regions.\n", Base.length(x.vertex_indices), Base.length(x.colortable.id))
 
-""" Return the brain region names of the [`FsAnnot`](@ref) surface annotation. """
+"""
+    regions(annot::FsAnnot)
+
+Return the brain region names of the [`FsAnnot`](@ref) surface annotation.
+
+# Examples
+```julia-repl
+julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
+julia> annot = read_annot(annot_file);
+julia> regions(annot)
+``` 
+"""
 regions(annot::FsAnnot) = annot.colortable.name
+
 
 """
     vertex_regions(annot::FsAnnot)
 
 Compute the region names for all vertices in an [`FsAnnot`](@ref) brain surface parcellation.
+
+# Examples
+```julia-repl
+julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
+julia> annot = read_annot(annot_file);
+julia> vertex_regions(annot)
+``` 
 """
 function vertex_regions(annot::FsAnnot)
     vrc = Array{String,1}(undef, Base.length(annot.vertex_indices))
@@ -47,6 +66,13 @@ end
     region_vertices(annot::FsAnnot, region::String)
 
 Get all vertices of a region in an [`FsAnnot`](@ref) brain surface parcellation. Returns an integer vector, the vertex indices.
+
+# Examples
+```julia-repl
+julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
+julia> annot = read_annot(annot_file);
+julia> region_vertices(annot, "bankssts")
+``` 
 """
 function region_vertices(annot::FsAnnot, region::String)
     region_idx = findfirst(x -> (x == region), annot.colortable.name)
@@ -60,6 +86,13 @@ end
     label_from_rgb(r::Integer, g::Integer, b::Integer, a::Integer=0)
 
 Compute the label from the color code of an [`FsAnnot`](@ref) brain region. Returns an integer, the label code.
+
+# Examples
+```julia-repl
+julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
+julia> annot = read_annot(annot_file);
+julia> label_from_rgb(annot.colortable.r[1], annot.colortable.g[1], annot.colortable.b[1])
+``` 
 """
 label_from_rgb(r::Integer, g::Integer, b::Integer, a::Integer=0) = r + g*2^8 + b*2^16 + a*2^24
 
@@ -76,6 +109,15 @@ data for the mesh or brain region vertices. Also see the convenience functions [
 and [`vertex_regions`](@ref) to work with `FsAnnot` structs.
 
 Returns an [`FsAnnot`](@ref) struct.
+
+# Examples
+```julia-repl
+julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
+julia> annot = read_annot(annot_file);
+julia> regions(annot)
+julia> Base.length(region_vertices(annot, "bankssts"))
+julia> 
+```
 """
 function read_annot(file::AbstractString)
     file_io = open(file, "r")

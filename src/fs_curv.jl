@@ -45,7 +45,9 @@ See also: [`write_curv`](@ref)
 
 # Examples
 ```julia-repl
-julia> curv = read_curv("~/study1/subject1/surf/lh.thickness")
+julia> curv_file = joinpath(tdd(), "subjects_dir/subject1/surf/lh.thickness");
+julia> curv = read_curv(curv_file);
+julia> sum(curv)/length(curv)
 ```
 """
 function read_curv(file::AbstractString; with_header::Bool=false)

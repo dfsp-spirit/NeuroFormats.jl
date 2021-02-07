@@ -4,6 +4,7 @@ module NeuroFormats
 using Reexport
 
 include("./utils.jl")
+export tdd
 
 include("./FreeSurfer.jl")
 using .FreeSurfer

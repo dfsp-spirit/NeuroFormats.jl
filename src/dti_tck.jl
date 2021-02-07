@@ -17,6 +17,14 @@ Read DTI tracks from a MRtrix3 file in TCK format.
 Returns a [`DtiTck`](@ref) struct.
 
 See also: [`read_trk`](@ref) reads tracks from DiffusionToolkit files.
+
+# Examples
+```julia-repl
+julia> tck_file = joinpath(tdd(), "DTI/simple_big_endian.tck");
+julia> tck = read_tck(tck_file);
+julia> Base.length(tck.tracks)
+julia> 
+```
 """
 function read_tck(file::AbstractString)
 

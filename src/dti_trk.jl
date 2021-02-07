@@ -57,13 +57,20 @@ Read DTI tracks from a file in the TRK format used by DiffusionToolkit and Track
 Returns a [`DtiTrk`](@ref) struct.
 
 See also: [`read_tck`](@ref) reads tracks from MRtrix3 files.
+
+# Examples
+```julia-repl
+julia> trk_file = joinpath(tdd(), "DTI/complex_big_endian.trk");
+julia> trk = read_trk(trk_file);
+julia> Base.length(trk.tracks)
+```
 """
 function read_trk(file::AbstractString)
     endian = _get_trk_endianness(file)
     endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
 
     io = open(file, "r")
-    header = read_trk_header(io, endian)
+    header = _read_trk_header(io, endian)
 
     tracks = Array{DtiTrack,1}(undef, header.n_count)
     if header.n_count > 0
@@ -105,7 +112,7 @@ function read_trk(file::AbstractString)
 end
 
 
-function read_trk_header(io::IO, endian::AbstractString)
+function _read_trk_header(io::IO, endian::AbstractString)
     endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
     header = DtiTrkHeader(
         _read_fixed_length_string(io, 6),
