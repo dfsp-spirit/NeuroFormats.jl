@@ -21,19 +21,20 @@ Note that some basic packages for reading neuroimaging data files are available 
 
 ## Installation
 
-This is a very early package version, and the package is not yet registered. You will have to checkout the repo and start a Julia REPL in the directory:
+You can find [NeuroFormats on JuliaHub](https://juliahub.com/ui/Packages/NeuroFormats/zxLcF/), so all you need to do is:
 
-```shell
-git clone https://github.com/dfsp-spirit/NeuroFormats.jl
-cd NeuroFormats.jl
-julia --project=.
+```julia
+Pkg.add("NeuroFormats")
 ```
+
+from a Julia session.
+
 
 ## Documentation
 
-The documentation is included with the package and can be browsed online at juliahub. It is not repeated on this website. 
+The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/). It is not repeated on this website. 
 
-Also keep in mind that you can get help on a function named `read_curv` from within Julia by typing `?read_curv`.
+Also keep in mind that you can always get help on a function named `read_curv` from within Julia by typing `?read_curv`. The [unit tests of this package](./test/) can also provide usage examples.
 
 
 ## Usage Example
@@ -48,7 +49,25 @@ thickness = read_curv(curv_file) # An Array{Float32, 1} with your cortical thick
 
 More examples can be found in the documentation, see above.
 
-## Continuous integration results:
+## Development
+
+### License
+
+NeuroFormats is published under the GPL v3, see the [LICENSE file](./LICENSE) for the full license.
+
+
+### Unit tests and continuous integration
+
+Continuous integration results:
 
 [![Build Status](https://travis-ci.org/dfsp-spirit/NeuroFormats.jl.svg?branch=main)](https://travis-ci.org/dfsp-spirit/NeuroFormats.jl) Travis CI under Linux
+
+
+### Contributing
+
+If you found a bug, have any question, suggestion or comment on freesurferformats, please [open an issue](https://github.com/dfsp-spirit/NeuroFormats.jl/issues). I will definitely answer and try to help.
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for instructions on how to contribute code.
+
+The NeuroFormats package was written by [Tim Schäfer](http://rcmd.org/ts/). To contact me in person, please use the email address given on my website.
 
