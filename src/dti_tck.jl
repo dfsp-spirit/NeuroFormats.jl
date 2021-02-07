@@ -22,8 +22,7 @@ See also: [`read_trk`](@ref) reads tracks from DiffusionToolkit files.
 ```julia-repl
 julia> tck_file = joinpath(tdd(), "DTI/simple_big_endian.tck");
 julia> tck = read_tck(tck_file);
-julia> Base.length(tck.tracks)
-julia> 
+julia> Base.length(tck.tracks) # show track count
 ```
 """
 function read_tck(file::AbstractString)

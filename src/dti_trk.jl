@@ -62,7 +62,7 @@ See also: [`read_tck`](@ref) reads tracks from MRtrix3 files.
 ```julia-repl
 julia> trk_file = joinpath(tdd(), "DTI/complex_big_endian.trk");
 julia> trk = read_trk(trk_file);
-julia> Base.length(trk.tracks)
+julia> Base.length(trk.tracks) # show track count
 ```
 """
 function read_trk(file::AbstractString)

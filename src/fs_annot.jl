@@ -32,7 +32,7 @@ Return the brain region names of the [`FsAnnot`](@ref) surface annotation.
 ```julia-repl
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
-julia> regions(annot)
+julia> regions(annot) # show all regions
 ``` 
 """
 regions(annot::FsAnnot) = annot.colortable.name
@@ -47,7 +47,7 @@ Compute the region names for all vertices in an [`FsAnnot`](@ref) brain surface 
 ```julia-repl
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
-julia> vertex_regions(annot)
+julia> vertex_regions(annot) # show for each vertex the brain region it is part of.
 ``` 
 """
 function vertex_regions(annot::FsAnnot)
@@ -71,7 +71,7 @@ Get all vertices of a region in an [`FsAnnot`](@ref) brain surface parcellation.
 ```julia-repl
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
-julia> region_vertices(annot, "bankssts")
+julia> region_vertices(annot, "bankssts") # show all vertices which are part of bankssts region.
 ``` 
 """
 function region_vertices(annot::FsAnnot, region::String)
@@ -115,8 +115,7 @@ Returns an [`FsAnnot`](@ref) struct.
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
 julia> regions(annot)
-julia> Base.length(region_vertices(annot, "bankssts"))
-julia> 
+julia> Base.length(region_vertices(annot, "bankssts")) # show vertex count of bankssts brain region.
 ```
 """
 function read_annot(file::AbstractString)
