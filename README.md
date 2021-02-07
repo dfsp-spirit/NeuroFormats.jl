@@ -5,9 +5,9 @@ Handling of structural neuroimaging file formats for [Julia](https://julialang.o
 
 ## About
 
-In the NeuroFormats package, we will provide an API, similar to that of the [freesurferformats R package](https://github.com/dfsp-spirit/freesurferformats), for reading structural neuroimaging data files in Julia. The focus will be on surface-based data, as produced by [FreeSurfer](https://freesurfer.net).
+In the NeuroFormats package, we will provide an API for reading structural neuroimaging data files in Julia. The focus will be on surface-based data, as produced by [FreeSurfer](https://freesurfer.net). The aim of the package is to allow scientists to access their neuroimaging data in Julia so they can use the language's power to implement custom data analysis pipelines.
 
-Note that some basic packages for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., NIFTI volume and GIFTI mesh support.
+Note that some functions for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., NIFTI volume and GIFTI mesh support. This package does not duplicate these functionalities.
 
 ## Features
 
@@ -34,20 +34,18 @@ from a Julia session.
 
 The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/). It is not repeated on this website. 
 
-Also keep in mind that you can always get help on a function named `read_curv` from within Julia by typing `?read_curv`. The [unit tests of this package](./test/) can also provide usage examples.
+Also keep in mind that you can always get help on a function named `read_curv` from within Julia by typing `?read_curv`. The [unit tests of this package](./test/) are essentially a collection of usage examples.
 
 
 ## Usage Example
 
-Please keep in mind that the API is not very stable yet. If you still want to give it a try already, here is an example for what you can do (after following the installation steps above):
+Here is an example for what you can do after following the installation steps above:
 
 ```julia
 using NeuroFormats
 curv_file = "path/to/subjects_dir/subjectX/surf/lh.thickness" # Adapt path to your data.
 thickness = read_curv(curv_file) # An Array{Float32, 1} with your cortical thickness data.
 ```
-
-More examples can be found in the documentation, see above.
 
 ## Development
 
