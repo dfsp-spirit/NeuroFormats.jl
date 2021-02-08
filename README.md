@@ -59,7 +59,7 @@ faces = surf.mesh.faces .+ 1
 scene = mesh(vertices, faces, color = curv)
 ```
 
-![Vis](./examepls/julia_brainplot_NeuroFormats.png?raw=true "A 3D brain visualization created in Julia.")
+![Vis](./examples/julia_brainplot_NeuroFormats.png?raw=true "A 3D brain visualization created in Julia.")
 
 
 ## Development
