@@ -39,12 +39,24 @@ Also keep in mind that you can always get help on a function named `read_curv` f
 
 ## Usage Example
 
-Here is an example for what you can do after following the installation steps above:
+This example shows how to load a FreeSurfer brain mesh with per-vertex data and visualize it in Julia using GLMakie:
 
 ```julia
 using NeuroFormats
-curv_file = "path/to/subjects_dir/subjectX/surf/lh.thickness" # Adapt path to your data.
-thickness = read_curv(curv_file) # An Array{Float32, 1} with your cortical thickness data.
+using GLMakie
+
+# I assume you have a subject / MRI scan preprocessed with FreeSurfer in this dir.
+fs_subject_dir = joinpath(homedir(), "data/study1/subject1/")
+
+surf = read_surf(joinpath(fs_subject_dir, "surf/lh.white"))
+
+# An Array{Float32, 1} with your cortical thickness data.
+curv = read_curv(joinpath(fs_subject_dir, "surf/lh.thickness"))
+
+vertices = surf.mesh.vertices
+faces = surf.mesh.faces .+ 1
+
+scene = mesh(vertices, faces, color = curv)
 ```
 
 ## Development
