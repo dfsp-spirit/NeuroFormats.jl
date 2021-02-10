@@ -17,12 +17,17 @@ struct MghHeader
     p_xyz_c::Array{Float32,1}
 end
 
-struct Mgh
+""" Alternate MghHeader constructor that does not require valid RAS information. """
+MghHeader(ndim1::Integer, ndim2::Integer, ndim3::Integer, ndim4::Integer, dtype::Integer) = MghHeader(1, ndim1, ndim2, ndim3, ndim4, dtype, 0, Int16(0), zeros(Float32, 3), Base.reshape(zeros(Float32, 9), (3, 3)), zeros(Float32, 3))
+
+struct Mgh{T<:Number}
     header::MghHeader
+    data::AbstractArray{T}
 end
 
 const mri_dtype_names = Dict{Integer, String}(0 => "MRI_UCHAR", 1 => "MRI_INT", 3 => "MRI_FLOAT", 4 => "MRI_SHORT")
 const mri_dtype_types = Dict{Integer, Integer}(0 => UInt8, 1 => Int32, 3 => Float32, 4 => Int16)
+
 
 function read_mgh(file::AbstractString)
     is_mgz::Bool = _is_file_gzipped(file)
@@ -33,6 +38,7 @@ function read_mgh(file::AbstractString)
 end
 
 
+""" Read the header part of an MGH/MGZ file and set io to beginning of data part. """
 function _read_mgh_header(io::IO)
     endian = "big"
     endian_func = Base.ntoh
@@ -71,7 +77,7 @@ function _read_mgh_header(io::IO)
         p_xyz_c::Array{Float32, 1} = zeros(Float32, 3)
     end
 
-    # TODO: reshape mdc array to 2D (3x3)
+    mdc::Array{Float32, 2} = Base.reshape(mdc, (3, 3))
 
     # skip to end of header / beginning of data
     discarded = _read_vector_endian(io, UInt8, header_size_left, endian = endian)
@@ -81,9 +87,11 @@ function _read_mgh_header(io::IO)
 end
 
 
+""" Determine whether a file is in gzip format. """
 function _is_file_gzipped(file::AbstractString)
     io = open(file, "r")    
-    is_gz = read(io, UInt8) == 0x1F && read(io, UInt8) == 0x8B
+    is_gz::Bool = read(io, UInt8) == 0x1F && read(io, UInt8) == 0x8B
     close(io)
     return(is_gz)
 end
+
