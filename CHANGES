@@ -1,6 +1,11 @@
 NeuroFormats.jl Changes
 =======================
 
+Version 0.2.1
+-------------
+- Support reading MGH and MGZ 4D images in FreeSurfer format: `read_mgh`
+
+
 Version 0.2.0
 --------------
 - BREAKING: no longer exports `interpret_fs_int24` function. This function was exported by accident and it is very unlikely that people used it.

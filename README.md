@@ -15,6 +15,7 @@ Note that some functions for reading neuroimaging data files are available from 
 * Read brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`): `read_surf()`
 * Read FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_label()`
 * Read FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_annot()`
+* Read FreeSurfer MGH brain volumes (4D voxel images, like `subject/mri/brain.mgz`): `read_mgh()`
 * Read DTI track data from MRtrix3 TCK files: `read_tck()`
 * Read DTI track data from DiffusionToolkit TRK files: `read_trk()`
 
