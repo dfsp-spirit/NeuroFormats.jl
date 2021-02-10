@@ -16,7 +16,10 @@
     @test mgh.header.dof == 0
     @test mgh.header.is_ras_good == 1
 
-    # TODO: test RAS data
+    # Teet RAS part of header
+    @test all(isapprox.(mgh.header.delta, [1.0, 1.0, 1.0], atol=0.05))
+    @test all(isapprox.(mgh.header.mdc, Base.reshape([-1.,0,0,0,0,-1,0,1,0], (3,3))))
+    @test all(isapprox.(mgh.header.p_xyz_c, [-0.5, 29.4, -48.9], atol=0.05))
 
     # Test data.
     @test Base.ndims(mgh.data) == 4
