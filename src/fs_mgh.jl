@@ -26,7 +26,7 @@ struct Mgh{T<:Number}
 end
 
 const mri_dtype_names = Dict{Integer, String}(0 => "MRI_UCHAR", 1 => "MRI_INT", 3 => "MRI_FLOAT", 4 => "MRI_SHORT")
-const mri_dtype_types = Dict{Integer, Integer}(0 => UInt8, 1 => Int32, 3 => Float32, 4 => Int16)
+const mri_dtype_types = Dict{Integer, Type}(0 => UInt8, 1 => Int32, 3 => Float32, 4 => Int16)
 
 
 """ 
@@ -37,15 +37,16 @@ Read a file in FreeSurfer MGH or MGZ format.
 These files typically contain 3D or 4D images, i.e., they represent voxel-based MRI data. They can also be used to store surface-based data though, in which case only 1 dimension is used (or 2 dimensions if data for several subjects or time points in included).
 """
 function read_mgh(file::AbstractString)
+    endian = "big"
     is_mgz::Bool = _is_file_gzipped(file)
-    io = read(file, "r")
+    io = open(file, "r")
     io = is_mgz ? CodecZlib.GzipDecompressorStream(io) : io
     header = _read_mgh_header(io::IO)
 
     num_voxels = header.ndim1 * header.ndim2 * header.ndim3 * header.ndim4
     dtype = mri_dtype_types[header.dtype]
-    data::Array{dtype, 1} = _read_vector_endian(io, dtype, num_voxels, endian = endian)
-    data::Array{dtype, 4} = Base.reshape(data, (header.ndim1, header.ndim2, header.ndim3, header.ndim4))
+    data_raw::Array{dtype, 1} = _read_vector_endian(io, dtype, num_voxels, endian = endian)
+    data::Array{dtype, 4} = Base.reshape(data_raw, (header.ndim1, header.ndim2, header.ndim3, header.ndim4))
     return(Mgh(header, data))
 end
 
@@ -54,18 +55,18 @@ end
 function _read_mgh_header(io::IO)
     endian = "big"
     endian_func = Base.ntoh
-    mgh_version::Int32 = Int32(endian_func(read(file_io, Int32)))
+    mgh_version::Int32 = Int32(endian_func(read(io, Int32)))
 
     if mgh_version != 1
         error("File not in MGH format.")
     end
 
-    ndim1::Int32 = Int32(endian_func(read(file_io, Int32)))
-    ndim2::Int32 = Int32(endian_func(read(file_io, Int32)))
-    ndim3::Int32 = Int32(endian_func(read(file_io, Int32)))
-    nframes::Int32 = Int32(endian_func(read(file_io, Int32)))
-    dtype::Int32 = Int32(endian_func(read(file_io, Int32)))
-    dof::Int32 = Int32(endian_func(read(file_io, Int32)))
+    ndim1::Int32 = Int32(endian_func(read(io, Int32)))
+    ndim2::Int32 = Int32(endian_func(read(io, Int32)))
+    ndim3::Int32 = Int32(endian_func(read(io, Int32)))
+    ndim4::Int32 = Int32(endian_func(read(io, Int32))) # a.k.a. nframes
+    dtype::Int32 = Int32(endian_func(read(io, Int32)))
+    dof::Int32 = Int32(endian_func(read(io, Int32)))
 
     if ! (dtype in keys(mri_dtype_names))
         error(@sprintf("Invalid or unsupported MRI data type '%d'.\n", dtype))
@@ -73,23 +74,23 @@ function _read_mgh_header(io::IO)
 
     header_size_left = 256
 
-    is_ras_good = Int16(endian_func(read(file_io, Int16)))
+    is_ras_good = Int16(endian_func(read(io, Int16)))
     header_size_left -= sizeof(Int16)
 
     if is_ras_good == 1
         delta = _read_vector_endian(io, Float32, 3, endian = endian) # xsize, ysize, zsize (voxel size along dimensions)
-        mdc = _read_vector_endian(io, Float32, 9, endian = endian) # matrix of direction cosines, a.k.a. x_r, x_a, x_s, y_r, y_a, y_s, z_r, z_a, z_s
+        mdc_raw = _read_vector_endian(io, Float32, 9, endian = endian) # matrix of direction cosines, a.k.a. x_r, x_a, x_s, y_r, y_a, y_s, z_r, z_a, z_s
         p_xyz_c = _read_vector_endian(io, Float32, 3, endian = endian) # x,y,z coord at center voxel, a.k.a. center RAS or CRAS 
 
         ras_space_size = 3*4 + 4*3*4    # 60 bytes for the 3 vectors/matrices above.
-        header_size_left -= RAS_space_size
+        header_size_left -= ras_space_size
     else
         delta::Array{Float32, 1} = zeros(Float32, 3)
-        mdc::Array{Float32, 1} = zeros(Float32, 9)
+        mdc_raw::Array{Float32, 1} = zeros(Float32, 9)
         p_xyz_c::Array{Float32, 1} = zeros(Float32, 3)
     end
 
-    mdc::Array{Float32, 2} = Base.reshape(mdc, (3, 3))
+    mdc::Array{Float32, 2} = Base.reshape(mdc_raw, (3, 3))
 
     # skip to end of header / beginning of data
     discarded = _read_vector_endian(io, UInt8, header_size_left, endian = endian)
