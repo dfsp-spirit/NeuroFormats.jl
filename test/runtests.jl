@@ -20,6 +20,7 @@ include("./test_fs_curv.jl")
 include("./test_fs_surface.jl")
 include("./test_fs_label.jl")
 include("./test_fs_annot.jl")
+include("./test_fs_mgh.jl")
 
 # DTI tests
 include("./test_dti_trk.jl")
