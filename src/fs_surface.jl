@@ -98,6 +98,13 @@ end
 Export a brain mesh to a Wavefront Object File.
 
 Use [`read_surf`](@ref) to obtain a mesh to export. Exporting to the popular OBJ format is useful for loading the mesh in 3D modeling or visualization applications, like Blender3D.
+
+# Examples
+```julia-repl
+julia> surf_file = joinpath(tdd(), "subjects_dir/subject1/surf/lh.white");
+julia> surf = read_surf(surf_file);
+julia> export_to_obj(tempname(), surf.mesh)
+```
 """
 function export_to_obj(file:: AbstractString, bm::BrainMesh)
     buffer::IOBuffer = IOBuffer()
@@ -123,6 +130,13 @@ end
 Export the mesh of a FreeSurfer surface to a Wavefront Object File.
 
 Use [`read_surf`](@ref) to obtain a mesh to export.
+
+# Examples
+```julia-repl
+julia> surf_file = joinpath(tdd(), "subjects_dir/subject1/surf/lh.white");
+julia> surf = read_surf(surf_file);
+julia> export_to_obj(tempname(), surf)
+```
 """
 export_to_obj(file:: AbstractString, x::FsSurface) = export_to_obj(file, x.mesh)
 

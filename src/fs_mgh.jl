@@ -3,6 +3,7 @@
 using CodecZlib
 using Printf
 
+""" Models the header of a FreeSurfer brain volume file in MGH or MGZ format."""
 struct MghHeader
     mgh_version::Int32
     ndim1::Int32   # size of first dimension.
@@ -20,6 +21,7 @@ end
 """ Alternate MghHeader constructor that does not require valid RAS information. """
 MghHeader(ndim1::Integer, ndim2::Integer, ndim3::Integer, ndim4::Integer, dtype::Integer) = MghHeader(1, ndim1, ndim2, ndim3, ndim4, dtype, 0, Int16(0), zeros(Float32, 3), Base.reshape(zeros(Float32, 9), (3, 3)), zeros(Float32, 3))
 
+""" Models a FreeSurfer brain volume file in MGH or MGZ format."""
 struct Mgh{T<:Number}
     header::MghHeader
     data::AbstractArray{T}
@@ -35,6 +37,13 @@ const mri_dtype_types = Dict{Integer, Type}(0 => UInt8, 1 => Int32, 3 => Float32
 Read a file in FreeSurfer MGH or MGZ format.
 
 These files typically contain 3D or 4D images, i.e., they represent voxel-based MRI data. They can also be used to store surface-based data though, in which case only 1 dimension is used (or 2 dimensions if data for several subjects or time points in included).
+
+# Examples
+```julia-repl
+julia> mgh_file = joinpath(tdd(), "subjects_dir/subject1/mri/brian.mgz");
+julia> mgh = read_mgh(mgh_file);
+julia> Base.ndims(mgh.data) # Show data dimensions.
+```
 """
 function read_mgh(file::AbstractString)
     endian = "big"
