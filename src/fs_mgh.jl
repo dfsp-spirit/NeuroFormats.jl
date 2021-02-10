@@ -40,7 +40,7 @@ These files typically contain 3D or 4D images, i.e., they represent voxel-based 
 
 # Examples
 ```julia-repl
-julia> mgh_file = joinpath(tdd(), "subjects_dir/subject1/mri/brian.mgz");
+julia> mgh_file = joinpath(tdd(), "subjects_dir/subject1/mri/brain.mgz");
 julia> mgh = read_mgh(mgh_file);
 julia> Base.ndims(mgh.data) # Show data dimensions.
 ```
