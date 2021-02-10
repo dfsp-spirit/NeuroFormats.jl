@@ -29,12 +29,24 @@ const mri_dtype_names = Dict{Integer, String}(0 => "MRI_UCHAR", 1 => "MRI_INT", 
 const mri_dtype_types = Dict{Integer, Integer}(0 => UInt8, 1 => Int32, 3 => Float32, 4 => Int16)
 
 
+""" 
+    read_mgh(file::AbstractString)
+
+Read a file in FreeSurfer MGH or MGZ format.
+
+These files typically contain 3D or 4D images, i.e., they represent voxel-based MRI data. They can also be used to store surface-based data though, in which case only 1 dimension is used (or 2 dimensions if data for several subjects or time points in included).
+"""
 function read_mgh(file::AbstractString)
     is_mgz::Bool = _is_file_gzipped(file)
     io = read(file, "r")
     io = is_mgz ? CodecZlib.GzipDecompressorStream(io) : io
     header = _read_mgh_header(io::IO)
 
+    num_voxels = header.ndim1 * header.ndim2 * header.ndim3 * header.ndim4
+    dtype = mri_dtype_types[header.dtype]
+    data::Array{dtype, 1} = _read_vector_endian(io, dtype, num_voxels, endian = endian)
+    data::Array{dtype, 4} = Base.reshape(data, (header.ndim1, header.ndim2, header.ndim3, header.ndim4))
+    return(Mgh(header, data))
 end
 
 
