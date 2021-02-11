@@ -1,7 +1,7 @@
 name = "NeuroFormats"
 uuid = "3448aec0-5570-4d68-9f4a-848140e12c29"
 authors = ["Tim Schäfer <ts+code@rcmd.org> and contributors"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
