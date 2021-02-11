@@ -27,3 +27,18 @@
     @test mgh.data[110, 110, 110, 1] == 71
     @test mgh.data[1, 1, 1, 1] == 0
 end
+
+
+@testset "Compute vox2ras matrix for MGH file." begin
+    
+    MGH_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/mri/brain.mgz")
+    mgh = read_mgh(MGH_FILE)
+    
+    # Use FreeSurfer's `mri_info` command line tool on the brain.mgz file to get this info:
+    expected_vox2ras = Base.reshape([-1.,0,0,0, 0,0,-1,0, 0,1,0,0, 127.5,-98.6273,79.0953,1], (4,4))
+    
+    vox2ras = compute_vox2ras(mgh)
+    @test Base.length(vox2ras) == 16
+    @test all(isapprox.(vox2ras, expected_vox2ras, atol=0.05))
+end
+

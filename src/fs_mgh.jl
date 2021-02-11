@@ -2,6 +2,7 @@
 
 using CodecZlib
 using Printf
+using LinearAlgebra
 
 """ Models the header of a FreeSurfer brain volume file in MGH or MGZ format."""
 struct MghHeader
@@ -116,4 +117,39 @@ function _is_file_gzipped(file::AbstractString)
     close(io)
     return(is_gz)
 end
+
+
+"""
+    compute_vox2ras(mgh::Mgh)
+
+Compute the VOX2RAS matrix for an Mgh instance. Requires valid RAS header data.
+
+# Examples
+```julia-repl
+julia> mgh_file = joinpath(tdd(), "subjects_dir/subject1/mri/brain.mgz");
+julia> mgh = read_mgh(mgh_file);
+julia> compute_vox2ras(mgh)
+```    
+"""
+function compute_vox2ras(mgh::Mgh)
+    hdr = mgh.header
+
+    if hdr.is_ras_good != 1
+        error("Cannot compute vox2ras matrix for MGH, RAS data invalid according to header.")
+    end
+
+    D = Base.reshape(zeros(Float32, 9), (3, 3))
+    diag_indices = LinearAlgebra.diagind(D)
+    D[diag_indices] = hdr.delta # delta = [xsize, ysize, zsize] #(voxel size along dimensions)
+    p_crs_c = [hdr.ndim1/2, hdr.ndim2/2, hdr.ndim3/2]       # CRS indices of the center voxel
+    mdc_scaled = hdr.mdc * D # Scaled by the voxel dimensions (xsize, ysize, zsize)
+    p_xyz_0 = hdr.p_xyz_c - (mdc_scaled * p_crs_c) # the x,y,z location at CRS=0,0,0 (also known as P0 RAS or 'first voxel RAS').
+
+    M = Base.reshape(zeros(Float32, 16), (4, 4))
+    M[1:3,1:3] = mdc_scaled #as.matrix(mdc_scaled)
+    M[4,1:4] = [0.,0,0,1] # affine row
+    M[1:3,4] = p_xyz_0
+    return(M)
+end
+
 
