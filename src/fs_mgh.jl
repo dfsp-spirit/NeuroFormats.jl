@@ -120,7 +120,7 @@ end
 
 
 """
-    compute_vox2ras(mgh::Mgh)
+    mgh_vox2ras(mgh::Mgh)
 
 Compute the VOX2RAS matrix for an Mgh instance. Requires valid RAS header data.
 
@@ -128,10 +128,10 @@ Compute the VOX2RAS matrix for an Mgh instance. Requires valid RAS header data.
 ```julia-repl
 julia> mgh_file = joinpath(tdd(), "subjects_dir/subject1/mri/brain.mgz");
 julia> mgh = read_mgh(mgh_file);
-julia> compute_vox2ras(mgh)
+julia> mgh_vox2ras(mgh)
 ```    
 """
-function compute_vox2ras(mgh::Mgh)
+function mgh_vox2ras(mgh::Mgh)
     hdr = mgh.header
 
     if hdr.is_ras_good != 1

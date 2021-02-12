@@ -6,7 +6,7 @@ export read_curv, write_curv, Curv, CurvHeader
 export read_surf, num_vertices, num_faces, export_to_obj, BrainMesh, FsSurface, FsSurfaceHeader
 export read_label
 export read_annot, FsAnnot, ColorTable, regions, vertex_regions, region_vertices, label_from_rgb
-export read_mgh, Mgh, MghHeader, compute_vox2ras
+export read_mgh, Mgh, MghHeader, mgh_vox2ras
 
 include("./utils.jl")
 include("./fs_common.jl")

@@ -37,7 +37,7 @@ end
     # Use FreeSurfer's `mri_info` command line tool on the brain.mgz file to get this info:
     expected_vox2ras = Base.reshape([-1.,0,0,0, 0,0,-1,0, 0,1,0,0, 127.5,-98.6273,79.0953,1], (4,4))
     
-    vox2ras = compute_vox2ras(mgh)
+    vox2ras = mgh_vox2ras(mgh)
     @test Base.length(vox2ras) == 16
     @test all(isapprox.(vox2ras, expected_vox2ras, atol=0.05))
 end
