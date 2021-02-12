@@ -33,7 +33,18 @@ function _read_fixed_length_string(io::IO, num_chars::Integer; strip_trailing::A
 end
 
 
-""" Get the path of the NeuroFormats test data directory. """
+"""
+    tdd()
+
+Get the path of the NeuroFormats test data directory.
+
+This is useful if you do not have own neuroimaging data at hand but still want to try NeuroFormats: you can use the unit test data that comes with the package. Explore the returned directory to see what is available.
+
+# Examples
+```julia-repl
+julia> curv_file = joinpath(tdd(), "subjects_dir/subject1/surf/lh.thickness");
+```
+"""
 function tdd()
     joinpath(@__DIR__, "..", "test", "data")
 end
