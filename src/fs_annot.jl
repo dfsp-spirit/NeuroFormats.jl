@@ -2,7 +2,7 @@
 
 import Base.show
 
-""" Models the brain region table included in an [`FsAnnot`](@ref) FreeSurfer annotation. Each entry describes a brain region. """
+""" Models the brain region table included in an [`FsAnnot`](@ref) FreeSurfer annotation. Each entry describes a brain region, which has a running numerical id, a name, a display color (r,g,b), and a unique integer label (computed from the color code) which is used in the corresponding [`FsAnnot`](@ref) to identify the region of a vertex. """
 struct ColorTable
     id::Array{Int32, 1} # region index, not really needed. The label is relevant, see below.
     name::Array{AbstractString, 1}
@@ -14,7 +14,7 @@ struct ColorTable
 end
 
 
-""" Models a FreeSurfer brain surface parcellation from an annot file. """
+""" Models a FreeSurfer brain surface parcellation from an annot file. This is the result of applying a brain atlas (like Desikan-Killiani) to a subject. The `vertex_indices` are the 0-based indices used in FreeSurfer and should be ignored. The `vertex_labels` field contains the mesh vertices in order, and assigns to each vertex a brain region using the `label` field (not the `id` field!) from the `colortable`. The field `colortable` contains a [`ColorTable`](@ref) struct that describes the brain regions. """
 struct FsAnnot
     vertex_indices::Array{Int32,1} # 0-based indices, not really needed.
     vertex_labels::Array{Int32,1}

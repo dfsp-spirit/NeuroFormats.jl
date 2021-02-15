@@ -14,7 +14,7 @@ struct CurvHeader
 end
 
 
-""" Models the structure of a file in Curv format. """
+""" Models the structure of a file in Curv format. The `header` field contains a [`CurvHeader`](@ref), the `data` field is a Float32 vector of per-vertex values. The values appear in the same order as the the vertices in the corresponding brain mesh (surf) file."""
 struct Curv
     header::CurvHeader
     data::Array{Float32, 1}

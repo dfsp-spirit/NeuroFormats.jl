@@ -4,7 +4,7 @@ using CodecZlib
 using Printf
 using LinearAlgebra
 
-""" Models the header of a FreeSurfer brain volume file in MGH or MGZ format."""
+""" Models the header of a FreeSurfer brain volume file in MGH or MGZ format. The data in the `delta`, `mdc` and `p_xyz_c` fields must be used only if `is_ras_good` is 1, otherwise their contents is random."""
 struct MghHeader
     mgh_version::Int32
     ndim1::Int32   # size of first dimension.
@@ -22,7 +22,7 @@ end
 """ Alternate MghHeader constructor that does not require valid RAS information. """
 MghHeader(ndim1::Integer, ndim2::Integer, ndim3::Integer, ndim4::Integer, dtype::Integer) = MghHeader(1, ndim1, ndim2, ndim3, ndim4, dtype, 0, Int16(0), zeros(Float32, 3), Base.reshape(zeros(Float32, 9), (3, 3)), zeros(Float32, 3))
 
-""" Models a FreeSurfer brain volume file in MGH or MGZ format."""
+""" Models a FreeSurfer brain volume file in MGH or MGZ format. The field `header` is an [`MghHeader`](@ref) struct, and the `data` field is a 4-dimensional numerical array. The exact data type of the `data` array depends on the file contents."""
 struct Mgh{T<:Number}
     header::MghHeader
     data::AbstractArray{T}
@@ -122,7 +122,7 @@ end
 """
     mgh_vox2ras(mgh::Mgh)
 
-Compute the VOX2RAS matrix for an Mgh instance. Requires valid RAS header data.
+Compute the vox2ras matrix for an [`Mgh`](@ref) instance. Requires valid RAS header data. The vox2ras matrix can be used to compute the `x`, `y`, `z` RAS coordinates of a voxel based on its `i`, `j` and `k` indices in the first three dimensions of the volume. Its inverse, the ras2vox matrix, can be used to compute the indices of the voxel that occupies a point in space given by its `x`, `y`, `z` RAS coordinates.
 
 # Examples
 ```julia-repl

@@ -4,7 +4,7 @@ import Base.show
 
 const TRIS_MAGIC_FILE_TYPE_NUMBER = 16777214
 
-""" Models the header section of a file in FreeSurfer Surface format. The files are big endian. """
+""" Models the header section of a file in FreeSurfer Surface format. The files are big endian. This header can usually be ignored. """
 struct FsSurfaceHeader
     magic_b1::UInt8
     magic_b2::UInt8
@@ -21,7 +21,7 @@ num_vertices(sh::FsSurfaceHeader) = sh.num_vertices
 num_faces(sh::FsSurfaceHeader) = sh.num_faces
 
 
-""" Models a trimesh. Vertices are defined by their xyz coordinates, and faces are given as indices into the vertex array. """
+""" Models a trimesh. Vertices are defined by their xyz coordinates and contained in the `vertices` field as an `n*3` matrix, and faces are given as indices into the vertex array in the `faces` field. """
 struct BrainMesh
     vertices::Array{Float32, 2}   # vertex xyz coords
     faces::Array{Int32, 2}        # indices of the 3 vertices forming the face / polygon / triangle
@@ -34,7 +34,7 @@ num_vertices(bm::BrainMesh) = Base.length(bm.vertices) / 3
 num_faces(bm::BrainMesh) = Base.length(bm.faces) / 3
 Base.show(io::IO, x::BrainMesh) = @printf("Brain mesh with %d vertices and %d faces.\n", num_vertices(x), num_faces(x))
 
-""" Models FreeSurfer Surface file. """
+""" Models FreeSurfer Surface file. The `header` field is an [`FsSurfaceHeader`](@ref) struct that can usually be ignored, the `mesh` field is a [`BrainMesh`](@ref) struct. """
 struct FsSurface
     header::FsSurfaceHeader
     mesh::BrainMesh

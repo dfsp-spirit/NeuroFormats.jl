@@ -1,7 +1,7 @@
 
 import Base.show
 
-""" Models a DTI TCK file. """
+""" Models a DTI TCK file. The `header` field contains a dictionary with the header fields, which can be anything a software decides to put there. The `tracks` fields contains a vector of [`DtiTrack`](@ref) structs. """
 struct DtiTck
     header::Dict{String, String}
     tracks::Array{DtiTrack,1}

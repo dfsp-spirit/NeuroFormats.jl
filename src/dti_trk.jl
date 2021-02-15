@@ -33,14 +33,15 @@ struct DtiTrkHeader
 end
 
 
-""" Models a single track for a TRK file. """
+""" Models a single track. The field `point_coords` contains an nx3 matrix of point coordinates. The `point_scalars` vector contains zero or more scalar values for each point of the track. The `track_properties` vector contains zero or more scalar values for the whole track. See the corresponding header for interpretation of `point_scalars` and `track_properties`."""
 struct DtiTrack
     point_coords::Array{Float64,2}
     point_scalars::Array{Float64,1}
     track_properties::Array{Float64,1}
 end
 
-""" Models a DTI TRK file. """
+
+""" Models a DTI TRK file. The `header` field contains a [`DtiTrkHeader`](@ref) struct. The `tracks` fields contains a vector of [`DtiTrack`](@ref) structs. """
 struct DtiTrk
     header::DtiTrkHeader
     tracks::Array{DtiTrack,1}
