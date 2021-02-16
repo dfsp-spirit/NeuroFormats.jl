@@ -16,8 +16,8 @@ Note that some functions for reading neuroimaging data files are available from 
 * Read FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_label()`
 * Read FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_annot()`
 * Read FreeSurfer MGH brain volumes (4D voxel images, like `subject/mri/brain.mgz`): `read_mgh()`
-* Read DTI track data from MRtrix3 TCK files: `read_tck()`
-* Read DTI track data from DiffusionToolkit TRK files: `read_trk()`
+* Read DTI track data from [MRtrix3](https://www.mrtrix.org/) TCK files: `read_tck()`
+* Read DTI track data from [DiffusionToolkit](http://trackvis.org/dtk/) TRK files: `read_trk()`
 
 
 ## Installation
@@ -35,7 +35,7 @@ from a Julia session.
 
 The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/0.2.1/). It is not repeated on this website.
 
-Also keep in mind that you can always get help on a function named `read_curv` from within Julia by typing `?read_curv`. The [unit tests of this package](./test/) are essentially a collection of usage examples.
+Use `?` to access the package documentation from within Julia, e.g., get help on a function named `read_curv` from within Julia by typing `?read_curv`. I also encourage you to have a look at the [unit tests of this package](./test/), they are essentially a collection of usage examples.
 
 
 ## Usage Examples
@@ -62,7 +62,7 @@ faces = surf.mesh.faces .+ 1
 scene = mesh(vertices, faces, color = curv)
 ```
 
-![Vis](./examples/julia_brainplot_NeuroFormats.png?raw=true "A 3D brain visualization created in Julia.")
+![Vis](./examples/julia_brainplot_NeuroFormats.png?raw=true "A 3D brain surface visualization created in Julia.")
 
 
 ### Example 2: An MRI volume
@@ -79,6 +79,8 @@ volume = dropdims(mgh.data, dims = 4) # drop time dimension, we only have one fr
 axis = range(0, stop = 1, length = size(volume, 1))
 scene3d = contour(axis, axis, axis, volume, alpha = 0.1, levels = 6)
 ```
+
+![VisVox](./examples/julia_brainplot_voxels_NeuroFormats.png?raw=true "A 3D brain volume visualization created in Julia.")
 
 ## Development
 
