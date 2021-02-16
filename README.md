@@ -33,7 +33,7 @@ from a Julia session.
 
 ## Documentation
 
-The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/). It is not repeated on this website. 
+The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/0.2.1/). It is not repeated on this website. 
 
 Also keep in mind that you can always get help on a function named `read_curv` from within Julia by typing `?read_curv`. The [unit tests of this package](./test/) are essentially a collection of usage examples.
 
@@ -46,10 +46,10 @@ This example shows how to load a FreeSurfer brain mesh with per-vertex data and 
 using NeuroFormats
 using GLMakie
 
-# I assume you have a subject / MRI scan preprocessed with FreeSurfer in this dir.
+# I assume you have an MRI scan preprocessed with FreeSurfer in this dir:
 fs_subject_dir = joinpath(homedir(), "data/study1/subject1/")
 
-surf = read_surf(joinpath(fs_subject_dir, "surf/lh.white"))
+surf = read_surf(joinpath(fs_subject_dir, "surf/lh.white")) # The brain mesh.
 
 # An Array{Float32, 1} with your cortical thickness data.
 curv = read_curv(joinpath(fs_subject_dir, "surf/lh.thickness"))
@@ -67,7 +67,7 @@ scene = mesh(vertices, faces, color = curv)
 
 ### License
 
-NeuroFormats is published under the GPL v3, see the [LICENSE file](./LICENSE) for the full license.
+NeuroFormats is free software published under the GPL v3, see the [LICENSE file](./LICENSE) for the full license.
 
 
 ### Unit tests and continuous integration
