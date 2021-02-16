@@ -33,12 +33,14 @@ from a Julia session.
 
 ## Documentation
 
-The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/0.2.1/). It is not repeated on this website. 
+The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/0.2.1/). It is not repeated on this website.
 
 Also keep in mind that you can always get help on a function named `read_curv` from within Julia by typing `?read_curv`. The [unit tests of this package](./test/) are essentially a collection of usage examples.
 
 
-## Usage Example
+## Usage Examples
+
+### Example 1: Cortical thickness on a brain mesh
 
 This example shows how to load a FreeSurfer brain mesh with per-vertex data and visualize it in Julia using GLMakie:
 
@@ -46,12 +48,12 @@ This example shows how to load a FreeSurfer brain mesh with per-vertex data and 
 using NeuroFormats
 using GLMakie
 
-# I assume you have an MRI scan preprocessed with FreeSurfer in this dir:
-fs_subject_dir = joinpath(homedir(), "data/study1/subject1/")
+# This uses the demo MRI data that comes with NeuroFormats, feel free to use your own FreeSurfer data.
+fs_subject_dir = joinpath(tdd(), "subjects_dir/subject1/")
 
 surf = read_surf(joinpath(fs_subject_dir, "surf/lh.white")) # The brain mesh.
 
-# An Array{Float32, 1} with your cortical thickness data.
+# An Array{Float32, 1} with your cortical thickness data:
 curv = read_curv(joinpath(fs_subject_dir, "surf/lh.thickness"))
 
 vertices = surf.mesh.vertices
@@ -62,6 +64,21 @@ scene = mesh(vertices, faces, color = curv)
 
 ![Vis](./examples/julia_brainplot_NeuroFormats.png?raw=true "A 3D brain visualization created in Julia.")
 
+
+### Example 2: An MRI volume
+
+This example loads a 3D MRI scan of a brain and visualizes it.
+
+```julia
+using NeuroFormats
+using GLMakie
+
+mgh = read_mgh(joinpath(tdd(), "subjects_dir/subject1/mri/brain.mgz"))
+volume = dropdims(mgh.data, dims = 4) # drop time dimension, we only have one frame here.
+
+axis = range(0, stop = 1, length = size(volume, 1))
+scene3d = contour(axis, axis, axis, volume, alpha = 0.1, levels = 6)
+```
 
 ## Development
 
@@ -84,4 +101,3 @@ If you found a bug, have any question, suggestion or comment on freesurferformat
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for instructions on how to contribute code.
 
 The NeuroFormats package was written by [Tim Schäfer](http://rcmd.org/ts/). To contact me in person, please use the email address given on my website.
-
