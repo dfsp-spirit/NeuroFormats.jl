@@ -48,13 +48,11 @@ This example shows how to load a FreeSurfer brain mesh with per-vertex data and 
 using NeuroFormats
 using GLMakie
 
-# This uses the demo MRI data that comes with NeuroFormats, feel free to use your own FreeSurfer data.
+# Uses NeuroFormats demo data, feel free to use your own FreeSurfer data.
 fs_subject_dir = joinpath(tdd(), "subjects_dir/subject1/")
 
 surf = read_surf(joinpath(fs_subject_dir, "surf/lh.white")) # The brain mesh.
-
-# An Array{Float32, 1} with your cortical thickness data:
-curv = read_curv(joinpath(fs_subject_dir, "surf/lh.thickness"))
+curv = read_curv(joinpath(fs_subject_dir, "surf/lh.thickness")) # cortical thickness.
 
 vertices = surf.mesh.vertices
 faces = surf.mesh.faces .+ 1
@@ -81,6 +79,28 @@ scene3d = contour(axis, axis, axis, volume, alpha = 0.1, levels = 6)
 ```
 
 ![VisVox](./examples/julia_brainplot_voxels_NeuroFormats.png?raw=true "A 3D brain volume visualization created in Julia.")
+
+
+### Example 3: An atlas-based brain surface parcellation
+
+```julia
+using NeuroFormats
+using Colors
+using GLMakie
+
+fs_subject_dir = joinpath(tdd(), "subjects_dir/subject1/")
+
+surf = read_surf(joinpath(fs_subject_dir, "surf/lh.white"))
+annot = read_annot(joinpath(fs_subject_dir, "label/lh.aparc.annot")) # from Desikan-Killiani atlas
+
+vertices = surf.mesh.vertices
+faces = surf.mesh.faces .+ 1
+
+scene = mesh(vertices, faces, color = vertex_colors(annot))
+```
+
+![VisAnnot](./examples/julia_brainplot_parcellation_NeuroFormats.png?raw=true "A 3D brain surface visualization created in Julia.")
+
 
 ## Development
 
