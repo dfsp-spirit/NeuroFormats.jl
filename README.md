@@ -5,7 +5,7 @@ Handling of structural neuroimaging file formats for [Julia](https://julialang.o
 
 ## About
 
-In the NeuroFormats package, we will provide an API for reading structural neuroimaging data files in Julia. The focus will be on surface-based data, as produced by [FreeSurfer](https://freesurfer.net). The aim of the package is to allow scientists to access their neuroimaging data in Julia so they can use the language's power to implement custom data analysis pipelines.
+The NeuroFormats package provides an API for reading structural neuroimaging data files in Julia. The focus is on surface-based data, as produced by [FreeSurfer](https://freesurfer.net). The aim of the package is to allow scientists to access their neuroimaging data in Julia so they can use the language's power to implement custom data analysis pipelines.
 
 Note that some functions for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., NIFTI volume and GIFTI mesh support. This package does not duplicate these functionalities.
 
@@ -15,7 +15,7 @@ Note that some functions for reading neuroimaging data files are available from 
 * Read brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`): `read_surf()`
 * Read FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_label()`
 * Read FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_annot()`
-* Read FreeSurfer MGH brain volumes (4D voxel images, like `subject/mri/brain.mgz`): `read_mgh()`
+* Read FreeSurfer MGH and MGZ brain volumes (4D voxel images, like `subject/mri/brain.mgz`): `read_mgh()`
 * Read DTI track data from [MRtrix3](https://www.mrtrix.org/) TCK files: `read_tck()`
 * Read DTI track data from [DiffusionToolkit](http://trackvis.org/dtk/) TRK files: `read_trk()`
 
