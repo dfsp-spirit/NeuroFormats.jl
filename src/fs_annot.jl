@@ -62,6 +62,32 @@ function vertex_regions(annot::FsAnnot)
 end
 
 
+#"""
+#    vertex_colors(annot::FsAnnot)
+#
+#Compute the vertex colors for all vertices in an [`FsAnnot`](@ref) brain surface parcellation. This function returns an Array{Color.RBG, 1} of colors.
+#
+# Examples
+#```julia-repl
+#julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
+#julia> annot = read_annot(annot_file);
+#julia> vertex_colors(annot) # show for each vertex the brain region it is part of.
+#``` 
+#"""
+#function vertex_colors(annot::FsAnnot)
+#    vrc = Array{Colors.RGB,1}(undef, Base.length(annot.vertex_indices))
+#    for region in regions(annot)
+#        region_idx = findfirst(x -> (x == region), annot.colortable.name)
+#        region_label = annot.colortable.label[region_idx]
+#        region_color = Colors.RGB(annot.colortable.r[region_idx]/255., annot.colortable.g[region_idx]/255., annot.colortable.b[region_idx]/255.)
+#        region_vertices = findall(region_label .== annot.vertex_labels)
+#        vrc[region_vertices] .= region_color
+#    end
+#    return(vrc)
+#end
+
+
+
 """ 
     region_vertices(annot::FsAnnot, region::String)
 
