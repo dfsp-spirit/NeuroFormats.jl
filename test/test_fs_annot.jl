@@ -1,7 +1,7 @@
 # Tests for reading FreeSurfer annotation data.
 
 
-@testset "Read a FreeSurfer annotation" begin
+@testset "Read a FreeSurfer annotation and compute properties" begin
     
     ANNOT_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/label/lh.aparc.annot")
     fs_annot = read_annot(ANNOT_FILE)
@@ -19,3 +19,13 @@
 
     @test label_from_rgb(fs_annot.colortable.r[1], fs_annot.colortable.g[1], fs_annot.colortable.b[1]) == fs_annot.colortable.label[1]
 end
+
+
+@testset "Derive per-vertex color information from a FreeSurfer annotation" begin
+    
+    ANNOT_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/label/lh.aparc.annot")
+    fs_annot = read_annot(ANNOT_FILE)
+
+    @test Base.length(vertex_colors(fs_annot)) == 149244
+end
+

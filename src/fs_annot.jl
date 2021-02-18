@@ -1,6 +1,7 @@
 # Functions for reading FreeSurfer annotation data for brain surfaces.
 
 import Base.show
+using Colors
 
 """ Models the brain region table included in an [`FsAnnot`](@ref) FreeSurfer annotation. Each entry describes a brain region, which has a running numerical id, a name, a display color (r,g,b), and a unique integer label (computed from the color code) which is used in the corresponding [`FsAnnot`](@ref) to identify the region of a vertex. """
 struct ColorTable
@@ -62,29 +63,29 @@ function vertex_regions(annot::FsAnnot)
 end
 
 
-#"""
-#    vertex_colors(annot::FsAnnot)
-#
-#Compute the vertex colors for all vertices in an [`FsAnnot`](@ref) brain surface parcellation. This function returns an Array{Color.RBG, 1} of colors.
-#
-# Examples
-#```julia-repl
-#julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
-#julia> annot = read_annot(annot_file);
-#julia> vertex_colors(annot) # show for each vertex the brain region it is part of.
-#``` 
-#"""
-#function vertex_colors(annot::FsAnnot)
-#    vrc = Array{Colors.RGB,1}(undef, Base.length(annot.vertex_indices))
-#    for region in regions(annot)
-#        region_idx = findfirst(x -> (x == region), annot.colortable.name)
-#        region_label = annot.colortable.label[region_idx]
-#        region_color = Colors.RGB(annot.colortable.r[region_idx]/255., annot.colortable.g[region_idx]/255., annot.colortable.b[region_idx]/255.)
-#        region_vertices = findall(region_label .== annot.vertex_labels)
-#        vrc[region_vertices] .= region_color
-#    end
-#    return(vrc)
-#end
+"""
+   vertex_colors(annot::FsAnnot)
+
+Compute the vertex colors for all vertices in an [`FsAnnot`](@ref) brain surface parcellation. This function returns an Array{Colors.RBG, 1} of colors. See the Colors package for details. Useful for plotting the annotation.
+
+Examples
+```julia-repl
+julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
+julia> annot = read_annot(annot_file);
+julia> vertex_colors(annot) # show the color for each vertex.
+``` 
+"""
+function vertex_colors(annot::FsAnnot)
+   vc = Array{Colors.RGB,1}(undef, Base.length(annot.vertex_indices))
+   for region in regions(annot)
+       region_idx = findfirst(x -> (x == region), annot.colortable.name)
+       region_label = annot.colortable.label[region_idx]
+       region_color = Colors.RGB(annot.colortable.r[region_idx]/255., annot.colortable.g[region_idx]/255., annot.colortable.b[region_idx]/255.)
+       region_vertices = findall(region_label .== annot.vertex_labels)
+       vc[region_vertices] .= region_color
+   end
+   return(vc)
+end
 
 
 
@@ -131,7 +132,7 @@ non-overlapping regions, based on a brain atlas. FreeSurfer parcellations assign
 each vertex of the mesh representing the reconstructed cortex.
 
 See also: [`read_surf`](@ref) to read the mesh that belongs the parcellation, and [`read_curv`](@ref) to read per-vertex
-data for the mesh or brain region vertices. Also see the convenience functions [`regions`](@ref), [`region_vertices`](@ref), [`label_from_rgb`](@ref) 
+data for the mesh or brain region vertices. Also see the convenience functions [`regions`](@ref), [`region_vertices`](@ref), [`label_from_rgb`](@ref), [`vertex_colors`](@ref) 
 and [`vertex_regions`](@ref) to work with `FsAnnot` structs.
 
 Returns an [`FsAnnot`](@ref) struct.
