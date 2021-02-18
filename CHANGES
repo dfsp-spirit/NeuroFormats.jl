@@ -1,20 +1,27 @@
 NeuroFormats.jl Changes
 =======================
 
+Version 0.2.2
+-------------
+- Add `vertex_colors` function that works on `FsAnnot` structs and computes per-vertex brain parcellation colors as `Colors.RGB`. Very handy for plotting.
+
+
 Version 0.2.1
 -------------
 - Support reading MGH and MGZ 4D images in FreeSurfer format: `read_mgh`
+- Much better API documentation for all return values, especially the structs.
 
 
 Version 0.2.0
 --------------
 - BREAKING: no longer exports `interpret_fs_int24` function. This function was exported by accident and it is very unlikely that people used it.
-- BREAKING: rename `read_fs_surface` function to `read_surf`.
+- BREAKING: rename public `read_fs_surface` function to `read_surf`.
 - Support reading the MRtrix TCK format: function `read_tck`.
 - Support reading the TRK format used by the Diffusion Toolkit and TrackVis: `read_trk`.
 - Support reading FreeSurfer label files: `read_label`.
 - Support reading FreeSurfer brain surface parcellation files, a.k.a. annot files: `read_annot`.
 - Add introduction page to documentation, fix generation of API docs. Document return types.
+- Rename all internal functions by prepending the function name with an underscore, to discourage external use.
 
 
 Version 0.1.0
