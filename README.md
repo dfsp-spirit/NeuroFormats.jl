@@ -85,7 +85,6 @@ scene3d = contour(axis, axis, axis, volume, alpha = 0.1, levels = 6)
 
 ```julia
 using NeuroFormats
-using Colors
 using GLMakie
 
 fs_subject_dir = joinpath(tdd(), "subjects_dir/subject1/")
