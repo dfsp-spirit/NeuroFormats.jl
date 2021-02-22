@@ -13,6 +13,7 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
+Colors = "0.12"
 CSV = "0.8"
 CodecZlib = "0.6, 0.7"
 DataFrames = "0.22"
