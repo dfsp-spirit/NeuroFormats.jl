@@ -73,7 +73,7 @@ end
 Write a numeric vector to a binary file in FreeSurfer Curv format. The data will be coverted to Float32.
 
 This function is typically used to write surface-based neuroimaging data, like per-vertex cortical thickness
-measurements from a reconstructed brain mesh.
+measurements, for a brain mesh.
 
 See also: [`read_curv`](@ref)
 

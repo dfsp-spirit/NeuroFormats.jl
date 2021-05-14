@@ -153,3 +153,95 @@ function mgh_vox2ras(mgh::Mgh)
     M[1:3,4] = p_xyz_0
     return(M)
 end
+
+
+"""
+    write_mgh(file::AbstractString, mgh::Mgh)
+
+Write an Mgh instance containing a 4D array to a binary file in FreeSurfer MGH format.
+
+This function is typically used to write volume-based neuroimaging data for a single subject/timepoint (3D) or for several subjects or timepoints (4D). One can also use it for per-vertex data for single subjects (1D) or groups (2D), of course. The subject/timepoint dimension is dimenions #4.
+
+See also: [`read_mgh`](@ref)
+
+"""
+function write_mgh(file::AbstractString, mgh::Mgh)
+    file_io =  open(file, "w")
+    
+    # Write header
+    write(file_io, ntoh(mgh.header.mgh_version))
+    write(file_io, ntoh(mgh.header.ndim1))
+    write(file_io, ntoh(mgh.header.ndim2))
+    write(file_io, ntoh(mgh.header.ndim3))
+    write(file_io, ntoh(mgh.header.ndim4))
+    write(file_io, ntoh(mgh.header.dtype))
+    write(file_io, ntoh(mgh.header.dof))
+
+
+    # Write RAS info part of header
+    header_size_left = 256
+    write(file_io, ntoh(mgh.header.is_ras_good))
+    header_size_left -= sizeof(Int16)
+    if mgh.header.is_ras_good == 1
+        for idx in eachindex(mgh.header.delta)
+            write(file_io, ntoh(mgh.header.delta[idx]))
+        end
+        for idx in eachindex(mgh.header.mdc)
+            write(file_io, ntoh(mgh.header.mdc[idx]))
+        end
+        for idx in eachindex(p_xyz_c)
+            write(file_io, ntoh(mgh.header.p_xyz_c[idx]))
+        end
+        header_size_left -= 60
+    end
+
+    # Fill rest of header space.
+    zero::Int8 = 0
+    for i in 1..header_size_left
+        write(file_io, ntoh(zero))
+    end
+
+
+    # Write data
+    for idx in eachindex(mgh.data)
+        write(file_io, ntoh(mgh.data[idx]))
+    end
+
+    close(file_io) 
+end
+
+
+
+ndim1::Int32 = Int32(endian_func(read(io, Int32)))
+ndim2::Int32 = Int32(endian_func(read(io, Int32)))
+ndim3::Int32 = Int32(endian_func(read(io, Int32)))
+ndim4::Int32 = Int32(endian_func(read(io, Int32))) # a.k.a. nframes
+dtype::Int32 = Int32(endian_func(read(io, Int32)))
+dof::Int32 = Int32(endian_func(read(io, Int32)))
+
+if ! (dtype in keys(mri_dtype_names))
+    error(@sprintf("Invalid or unsupported MRI data type '%d'.\n", dtype))
+end
+
+header_size_left = 256
+
+is_ras_good = Int16(endian_func(read(io, Int16)))
+header_size_left -= sizeof(Int16)
+
+if is_ras_good == 1
+    delta = _read_vector_endian(io, Float32, 3, endian = endian) # xsize, ysize, zsize (voxel size along dimensions)
+    mdc_raw = _read_vector_endian(io, Float32, 9, endian = endian) # matrix of direction cosines, a.k.a. x_r, x_a, x_s, y_r, y_a, y_s, z_r, z_a, z_s
+    p_xyz_c = _read_vector_endian(io, Float32, 3, endian = endian) # x,y,z coord at center voxel, a.k.a. center RAS or CRAS
+
+    ras_space_size = 3*4 + 4*3*4    # 60 bytes for the 3 vectors/matrices above.
+    header_size_left -= ras_space_size
+else
+    delta::Array{Float32, 1} = zeros(Float32, 3)
+    mdc_raw::Array{Float32, 1} = zeros(Float32, 9)
+    p_xyz_c::Array{Float32, 1} = zeros(Float32, 3)
+end
+
+mdc::Array{Float32, 2} = Base.reshape(mdc_raw, (3, 3))
+
+# skip to end of header / beginning of data
+discarded = _read_vector_endian(io, UInt8, header_size_left, endian = endian)
