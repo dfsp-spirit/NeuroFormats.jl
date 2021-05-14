@@ -32,7 +32,7 @@ const mri_dtype_names = Dict{Integer, String}(0 => "MRI_UCHAR", 1 => "MRI_INT", 
 const mri_dtype_types = Dict{Integer, Type}(0 => UInt8, 1 => Int32, 3 => Float32, 4 => Int16)
 
 
-""" 
+"""
     read_mgh(file::AbstractString)
 
 Read a file in FreeSurfer MGH or MGZ format.
@@ -90,7 +90,7 @@ function _read_mgh_header(io::IO)
     if is_ras_good == 1
         delta = _read_vector_endian(io, Float32, 3, endian = endian) # xsize, ysize, zsize (voxel size along dimensions)
         mdc_raw = _read_vector_endian(io, Float32, 9, endian = endian) # matrix of direction cosines, a.k.a. x_r, x_a, x_s, y_r, y_a, y_s, z_r, z_a, z_s
-        p_xyz_c = _read_vector_endian(io, Float32, 3, endian = endian) # x,y,z coord at center voxel, a.k.a. center RAS or CRAS 
+        p_xyz_c = _read_vector_endian(io, Float32, 3, endian = endian) # x,y,z coord at center voxel, a.k.a. center RAS or CRAS
 
         ras_space_size = 3*4 + 4*3*4    # 60 bytes for the 3 vectors/matrices above.
         header_size_left -= ras_space_size
@@ -105,14 +105,14 @@ function _read_mgh_header(io::IO)
     # skip to end of header / beginning of data
     discarded = _read_vector_endian(io, UInt8, header_size_left, endian = endian)
 
-    header = MghHeader(mgh_version, ndim1, ndim2, ndim3, ndim4, dtype, dof, is_ras_good, delta, mdc, p_xyz_c)    
+    header = MghHeader(mgh_version, ndim1, ndim2, ndim3, ndim4, dtype, dof, is_ras_good, delta, mdc, p_xyz_c)
     return(header)
 end
 
 
 """ Determine whether a file is in gzip format. """
 function _is_file_gzipped(file::AbstractString)
-    io = open(file, "r")    
+    io = open(file, "r")
     is_gz::Bool = read(io, UInt8) == 0x1F && read(io, UInt8) == 0x8B
     close(io)
     return(is_gz)
@@ -129,7 +129,7 @@ Compute the vox2ras matrix for an [`Mgh`](@ref) instance. Requires valid RAS hea
 julia> mgh_file = joinpath(tdd(), "subjects_dir/subject1/mri/brain.mgz");
 julia> mgh = read_mgh(mgh_file);
 julia> mgh_vox2ras(mgh)
-```    
+```
 """
 function mgh_vox2ras(mgh::Mgh)
     hdr = mgh.header
@@ -142,7 +142,9 @@ function mgh_vox2ras(mgh::Mgh)
     diag_indices = LinearAlgebra.diagind(D)
     D[diag_indices] = hdr.delta # delta = [xsize, ysize, zsize] #(voxel size along dimensions)
     p_crs_c = [hdr.ndim1/2, hdr.ndim2/2, hdr.ndim3/2]       # CRS indices of the center voxel
+
     mdc_scaled = hdr.mdc * D # Scaled by the voxel dimensions (xsize, ysize, zsize)
+
     p_xyz_0 = hdr.p_xyz_c - (mdc_scaled * p_crs_c) # the x,y,z location at CRS=0,0,0 (also known as P0 RAS or 'first voxel RAS').
 
     M = Base.reshape(zeros(Float32, 16), (4, 4))
@@ -151,5 +153,3 @@ function mgh_vox2ras(mgh::Mgh)
     M[1:3,4] = p_xyz_0
     return(M)
 end
-
-
