@@ -1,6 +1,6 @@
 # Functions for reading MGH and MGZ files. These are always big endian.
 
-using CodecZlib
+using CodecZlib, TranscodingStreams
 using Printf
 using LinearAlgebra
 
@@ -110,7 +110,7 @@ function _read_mgh_header(io::IO)
 end
 
 
-""" Determine whether a file is in gzip format. """
+""" Determine whether a file is in gzip format, based on first bytes of file contents. """
 function _is_file_gzipped(file::AbstractString)
     io = open(file, "r")
     is_gz::Bool = read(io, UInt8) == 0x1F && read(io, UInt8) == 0x8B
@@ -156,17 +156,37 @@ end
 
 
 """
-    write_mgh(file::AbstractString, mgh::Mgh)
+    write_mgh(file::AbstractString, mgh::Mgh; format::AbstractString = "auto")
 
-Write an Mgh instance containing a 4D array to a binary file in FreeSurfer MGH format.
+Write an Mgh instance containing a 4D array to a binary file in FreeSurfer MGH or MGZ format.
 
 This function is typically used to write volume-based neuroimaging data for a single subject/timepoint (3D) or for several subjects or timepoints (4D). One can also use it for per-vertex data for single subjects (1D) or groups (2D), of course. The subject/timepoint dimension is dimenions #4.
 
-See also: [`read_mgh`](@ref)
+# Arguments
+- `file::AbstractString`: the output file, must be in a writable location, all directories on the path to it must exist.
+- `mgh::Mgh`: the Mgh instance to write
+- `format::AbstractString`: whether to use MGH ot MGZ format, must be one of 'mgh', 'mgz', or 'auto' (the default), which will derive the format from the filename (it will use mgz format if the 'file' paramter ends with 'gz', and mgh otherwise).
 
+See also: [`read_mgh`](@ref)
 """
-function write_mgh(file::AbstractString, mgh::Mgh)
+function write_mgh(file::AbstractString, mgh::Mgh; format::AbstractString = "auto")
+
+    valid_formats = ["auto", "mgh", "mgz"]
+    if ! (format in valid_formats)
+        error("Format must be one of 'auto', 'mgh', 'mgz'.")
+    end
+
+    is_gz = format == "mgz" ? true : false
+    if format == "auto"
+        if endswith(file, "gz")
+            is_gz = true
+        end
+    end
+
     file_io =  open(file, "w")
+    if is_gz
+        file_io = TranscodingStream(GzipCompressor(), file_io)
+    end
     
     # Write header
     write(file_io, ntoh(mgh.header.mgh_version))
