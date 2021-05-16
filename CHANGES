@@ -1,6 +1,11 @@
 NeuroFormats.jl Changes
 =======================
 
+Version 0.2.3
+-------------
+- Add `write_mgh` function that can write 4D data in FreeSurfer MGH and MGZ formats.
+
+
 Version 0.2.2
 -------------
 - Add `vertex_colors` function that works on `FsAnnot` structs and computes per-vertex brain parcellation colors as `Colors.RGB`. Very handy for plotting.
