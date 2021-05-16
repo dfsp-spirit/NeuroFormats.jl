@@ -107,6 +107,27 @@ scene = mesh(vertices, faces, color = vertex_colors(annot))
 
 NeuroFormats is free software published under the GPL v3, see the [LICENSE file](./LICENSE) for the full license.
 
+### Citing
+
+Please consider citing NeuroFormats if you use it for your research.
+
+```
+To cite package ‘NeuroFormats’ in publications use:
+
+  Tim Schäfer (2021). NeuroFormats: Handling of structural neuroimaging file formats for Julia. Julia package version 0.2.2. https://juliahub.com/ui/Packages/NeuroFormats/zxLcF/
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {NeuroFormats: Handling of structural neuroimaging file formats for Julia},
+    author = {Tim Schäfer},
+    year = {2021},
+    note = {Julia package version 0.2.2},
+    url = {https://juliahub.com/ui/Packages/NeuroFormats/zxLcF/},
+  }
+```
+
+Be sure to adapt the package version to the version you actually used.
 
 ### Unit tests and continuous integration
 
