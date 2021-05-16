@@ -8,7 +8,7 @@ I am very happy to accept [pull requests](https://help.github.com/en/github/coll
 If you want to contribute something, the general workflow is:
 
 - Log into the Github website and fork the NeuroFormats.jl repository to your account.
-- Checkout your forked repository to your computer. You will be on the maain branch. Change to the develop branch.
+- Checkout your forked repository to your computer. You will be on the main branch. Change to the develop branch.
 - Create a new branch and name it after your feature, e.g., `add_cool_new_feature` or `fix_issue_17`.
 - Make changes to the NeuroFormats code and commit them into your branch.
 - Make sure the existing unit tests are all green (see below). Adding new tests for your fix or the new features is even better.
