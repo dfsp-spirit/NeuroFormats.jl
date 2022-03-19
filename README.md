@@ -25,6 +25,7 @@ Note that some functions for reading neuroimaging data files are available from 
 You can find [NeuroFormats on JuliaHub](https://juliahub.com/ui/Packages/NeuroFormats/zxLcF/), so all you need to do is:
 
 ```julia
+using Pkg
 Pkg.add("NeuroFormats")
 ```
 
