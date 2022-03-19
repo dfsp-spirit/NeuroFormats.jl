@@ -43,7 +43,9 @@ Use `?` to access the package documentation from within Julia, e.g., get help on
 
 ### Example 1: Cortical thickness on a brain mesh
 
-The following example shows how to load a FreeSurfer brain mesh with per-vertex data and visualize it in Julia using NeuroFormats and GLMakie. If you do not have `GLMakie` installed, install it with `Pkg.add()` as described for `NeuroFormats` above.
+The following example shows how to load a FreeSurfer brain mesh with per-vertex data and visualize it in Julia using NeuroFormats and GLMakie.
+
+Note: If you do not have `GLMakie` installed, install it with `Pkg.add()` as described for `NeuroFormats` above. In that case, the example below will take a while to execute the first time you run it, as the packages will need to be precompiled first. Afterwards, visualization will be almost instant.
 
 ```julia
 using NeuroFormats
