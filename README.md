@@ -7,7 +7,7 @@ Handling of structural neuroimaging file formats for [Julia](https://julialang.o
 
 The NeuroFormats package provides an API for reading structural neuroimaging data files in Julia. The focus is on surface-based data, as produced by [FreeSurfer](https://freesurfer.net). The aim of the package is to allow scientists to access their neuroimaging data in Julia so they can use the language's power to implement custom data analysis pipelines.
 
-Note that some functions for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., NIFTI volume and GIFTI mesh support. This package does not duplicate these functionalities.
+Note that some functions for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., [NIFTI volume](https://github.com/JuliaNeuroscience/NIfTI.jl) and [GIFTI mesh](https://github.com/JuliaNeuroscience/GIFTI.jl) support. This package does not duplicate these functionalities.
 
 ## Features
 
