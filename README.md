@@ -141,7 +141,7 @@ Continuous integration results:
 
 ### Contributing
 
-If you found a bug, have any question, suggestion or comment on freesurferformats, please [open an issue](https://github.com/dfsp-spirit/NeuroFormats.jl/issues). I will definitely answer and try to help.
+If you found a bug, have any question, suggestion or comment on freesurferformats, please [open an issue](https://github.com/dfsp-spirit/NeuroFormats.jl/issues). I will definitely answer and try to help. You can also let me know if you need support for a new file format.
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for instructions on how to contribute code.
 
