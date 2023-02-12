@@ -145,4 +145,4 @@ If you found a bug, have any question, suggestion or comment on freesurferformat
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for instructions on how to contribute code.
 
-The NeuroFormats package was written by [Tim Schäfer](http://rcmd.org/ts/). To contact me in person, please use the email address given on my website.
+The NeuroFormats package was written by [Tim Schäfer](https://ts.rcmd.org). To contact me in person, please use the email address given on my website.
