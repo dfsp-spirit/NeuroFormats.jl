@@ -2,7 +2,7 @@
 
 Handling of structural neuroimaging file formats for [Julia](https://julialang.org).
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8120740.svg)](https://doi.org/10.5281/zenodo.8120740)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8120740.svg)](https://doi.org/10.5281/zenodo.8120740) [![license](https://img.shields.io/github/license/dfsp-spirit/NeuroFormats.jl.svg)](https://github.com/dfsp-spirit/NeuroFormats.jl/blob/main/LICENSE) ![main](https://github.com/dfsp-spirit/NeuroFormats.jl/actions/workflows/CI.yml/badge.svg?branch=main)
 
 
 ## About
