@@ -134,11 +134,14 @@ A BibTeX entry for LaTeX users is
 
 Be sure to adapt the package version to the version you actually used.
 
+
 ### Unit tests and continuous integration
 
 Continuous integration results:
 
-[![Build Status](https://travis-ci.org/dfsp-spirit/NeuroFormats.jl.svg?branch=main)](https://travis-ci.org/dfsp-spirit/NeuroFormats.jl) Travis CI under Linux
+Main branch: ![main](https://github.com/dfsp-spirit/NeuroFormats.jl/actions/workflows/CI.yml/badge.svg?branch=main)
+
+Develop branch: ![develop](https://github.com/dfsp-spirit/NeuroFormats.jl/actions/workflows/CI.yml/badge.svg?branch=develop)
 
 
 ### Contributing
