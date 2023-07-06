@@ -13,7 +13,7 @@ Note that some functions for reading neuroimaging data files are available from 
 
 * Read and write FreeSurfer per-vertex data in curv format (like `subject/surf/lh.thickness`): functions `read_curv()` and `write_curv()`
 * Read brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`): `read_surf()`
-* Read FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_label()`
+* Read and write FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_label()` and `write_label()`
 * Read FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_annot()`
 * Read and write FreeSurfer MGH and MGZ brain volumes (4D voxel images, like `subject/mri/brain.mgz`): `read_mgh()` and `write_mgh()`
 * Read DTI track data from [MRtrix3](https://www.mrtrix.org/) TCK files: `read_tck()`

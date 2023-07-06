@@ -11,6 +11,7 @@ cd <repo>
 julia
 # now, in the julia interpreter, hit the ']' key. This changes the
 # prompt from 'julia> ' to something like '(@v1.5) pkg> '. Then:
+dev .
 test NeuroFormats.jl
 ```
 

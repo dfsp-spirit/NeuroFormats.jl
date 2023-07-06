@@ -4,7 +4,7 @@ using Printf
 
 export read_curv, write_curv, Curv, CurvHeader
 export read_surf, num_vertices, num_faces, export_to_obj, BrainMesh, FsSurface, FsSurfaceHeader
-export read_label, read_annot, FsAnnot, ColorTable, regions, vertex_regions, region_vertices, label_from_rgb, vertex_colors
+export read_label, write_label, read_annot, FsAnnot, ColorTable, regions, vertex_regions, region_vertices, label_from_rgb, vertex_colors
 export read_mgh, Mgh, MghHeader, mgh_vox2ras, write_mgh
 
 include("./utils.jl")
