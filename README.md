@@ -2,6 +2,8 @@
 
 Handling of structural neuroimaging file formats for [Julia](https://julialang.org).
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8120740.svg)](https://doi.org/10.5281/zenodo.8120740)
+
 
 ## About
 
@@ -22,6 +24,10 @@ This package is not under heavy development anymore, but that does not mean that
 * Read DTI track data from [DiffusionToolkit](http://trackvis.org/dtk/) TRK files: `read_trk()`
 
 
+## News
+
+* 2023-07-06: We just released version 0.3.0 of NeuroFormats. This version has been updated for recent Julia versions and works with Julia 1.9. It also adds support for writing label files. See the [CHANGES](./CHANGES) for more details.
+
 ## Installation
 
 You can find [NeuroFormats on JuliaHub](https://juliahub.com/ui/Packages/NeuroFormats/zxLcF/), so all you need to do is:
@@ -36,7 +42,7 @@ from a Julia session.
 
 ## Documentation
 
-The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/0.2.1/). It is not repeated on this website.
+The documentation is included with the package and can be [browsed online at JuliaHub](https://juliahub.com/docs/NeuroFormats/zxLcF/0.3.0/). It is not repeated on this website.
 
 Use `?` to access the package documentation from within Julia, e.g., get help on a function named `read_curv` from within Julia by typing `?read_curv`. I also encourage you to have a look at the [unit tests of this package](./test/), they are essentially a collection of usage examples.
 
@@ -116,18 +122,21 @@ NeuroFormats is free software published under the GPL v3, see the [LICENSE file]
 
 Please consider citing NeuroFormats if you use it for your research.
 
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8120740.svg)](https://doi.org/10.5281/zenodo.8120740)
+
 ```
 To cite package ‘NeuroFormats’ in publications use:
 
-  Tim Schäfer (2021). NeuroFormats: Handling of structural neuroimaging file formats for Julia. Julia package version 0.2.2. https://juliahub.com/ui/Packages/NeuroFormats/zxLcF/
+  Tim Schäfer (2023). NeuroFormats: Handling of structural neuroimaging file formats for Julia. Julia package version 0.3.0. https://juliahub.com/ui/Packages/NeuroFormats/zxLcF/
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {NeuroFormats: Handling of structural neuroimaging file formats for Julia},
     author = {Tim Schäfer},
-    year = {2021},
-    note = {Julia package version 0.2.2},
+    year = {2023},
+    note = {Julia package version 0.3.0},
     url = {https://juliahub.com/ui/Packages/NeuroFormats/zxLcF/},
   }
 ```
