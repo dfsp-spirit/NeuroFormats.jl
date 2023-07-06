@@ -1,9 +1,12 @@
 NeuroFormats.jl Changes
 =======================
 
-Current dev
------------
+Version 0.3.0
+--------------
 - Add `write_label` function that can write a label dataframe to a FreeSurfer label file.
+- Update package for latest Julia version: built with and for Julia 1.9.2, and update various dependencies accordingly.
+- Update file format version of Manifest.toml to manifest_format = "2.0", which includes a Julia version.
+
 
 Version 0.2.3
 -------------
