@@ -9,6 +9,8 @@ The NeuroFormats package provides an API for reading structural neuroimaging dat
 
 Note that some functions for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., [NIFTI volume](https://github.com/JuliaNeuroscience/NIfTI.jl) and [GIFTI mesh](https://github.com/JuliaNeuroscience/GIFTI.jl) support. This package does not duplicate these functionalities.
 
+This package is not under heavy development anymore, but that does not mean that it is unmaintained. I consider it pretty feature-complete, and the file formats do not change. If you feel this package is missing an important format, please open an issue.
+
 ## Features
 
 * Read and write FreeSurfer per-vertex data in curv format (like `subject/surf/lh.thickness`): functions `read_curv()` and `write_curv()`
