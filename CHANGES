@@ -1,6 +1,10 @@
 NeuroFormats.jl Changes
 =======================
 
+Current dev
+-----------
+- Add `write_label` function that can write a label dataframe to a FreeSurfer label file.
+
 Version 0.2.3
 -------------
 - Add `write_mgh` function that can write 4D data in FreeSurfer MGH and MGZ formats.
