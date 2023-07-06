@@ -2,7 +2,21 @@
 
 ## Recommended dev environment
 
-I used VisualStudio Code with the `Julia` extension.
+I used VisualStudio Code with the `Julia` extension. Use whatever you like.
+
+
+## Adding a new function to the package API
+
+These involves the following steps:
+
+* create a new branch off `develop`.
+* write the new function, including doc string.
+* Depending on where you create the new function:
+    - If you added the new function in a new source file, you have to `include()` the file in [NeuroFormats.jl](./NeuroFormats.jl), or in the sub modules files like `FreeSurfer.jl` and `DTI.jl`.
+    - Otherwise (i.e., you created the function in an existing source file), you have to `export()` the function in the respective sub module file, like `FreeSurfer.jl`.
+* add and run unit tests for the new function.
+* git add and commit, create a PR against `develop`.
+
 
 ## Running the unit tests
 
