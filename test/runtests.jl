@@ -6,10 +6,7 @@ import Base.length, Base.maximum, Base.minimum, Base.fieldcount
 # The easiest way to run these tests with the current version of your code
 # seems to be the following one:
 # - start a JULIA interpreter with `cd develop/NeuroFormats.jl; julia --project=.`, then:
-# - run: `using Pkg; Pkg.test("NeuroFormats");` 
-
-
-include("./utils_for_testing.jl")
+# - run: `using Pkg; Pkg.test("NeuroFormats");`
 
 # Common utility tests
 include("./test_utils.jl")

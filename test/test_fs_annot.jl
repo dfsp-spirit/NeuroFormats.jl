@@ -3,7 +3,7 @@
 
 @testset "Read a FreeSurfer annotation and compute properties" begin
 
-    ANNOT_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/label/lh.aparc.annot")
+    ANNOT_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/label/lh.aparc.annot")
     fs_annot = read_annot(ANNOT_FILE)
 
     @test Base.length(fs_annot.vertex_indices) == 149244
@@ -29,7 +29,7 @@ end
 
 @testset "Derive per-vertex color information from a FreeSurfer annotation" begin
 
-    ANNOT_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/label/lh.aparc.annot")
+    ANNOT_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/label/lh.aparc.annot")
     fs_annot = read_annot(ANNOT_FILE)
 
     @test Base.length(vertex_colors(fs_annot)) == 149244

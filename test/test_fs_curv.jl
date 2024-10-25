@@ -1,8 +1,8 @@
 
 
 @testset "fs_curv.jl: read curv with header" begin
-    
-CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
+
+CURV_LH_THICKNESS_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/surf/lh.thickness")
 curv = read_curv(CURV_LH_THICKNESS_FILE, with_header = true)
 
 # Header
@@ -22,7 +22,7 @@ end
 
 @testset "fs_curv.jl: read curv without header" begin
 
-CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
+CURV_LH_THICKNESS_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/surf/lh.thickness")
 curv_data = read_curv(CURV_LH_THICKNESS_FILE, with_header = false)
 
 # Content
@@ -34,13 +34,13 @@ end
 
 @testset "fs_curv.jl: write and re-read curv file" begin
 
-CURV_LH_THICKNESS_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.thickness")
+CURV_LH_THICKNESS_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/surf/lh.thickness")
 curv_data = read_curv(CURV_LH_THICKNESS_FILE, with_header = false)
 
 # Write and re-read
 tf = tempname()
 write_curv(tf, curv_data)
-curv_re = read_curv(tf, with_header = true) 
+curv_re = read_curv(tf, with_header = true)
 
 # Header
 @test curv_re.header.curv_magic_b1 == 0xff
