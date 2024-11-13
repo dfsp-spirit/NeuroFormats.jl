@@ -3,7 +3,7 @@ using DataFrames
 
 @testset "A FreeSurfer surface label file can be read" begin
 
-    LABEL_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/label/lh.entorhinal_exvivo.label")
+    LABEL_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/label/lh.entorhinal_exvivo.label")
     fs_label = read_label(LABEL_FILE)
 
     @test typeof(fs_label) == DataFrames.DataFrame
@@ -14,7 +14,7 @@ end
 
 @testset "A FreeSurfer surface label file can be read, written and re-read" begin
 
-    LABEL_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/label/lh.entorhinal_exvivo.label")
+    LABEL_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/label/lh.entorhinal_exvivo.label")
     fs_label = read_label(LABEL_FILE)
 
     @test typeof(fs_label) == DataFrames.DataFrame

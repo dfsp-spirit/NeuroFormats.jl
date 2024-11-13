@@ -1,11 +1,11 @@
 
 @testset "utils.jl: read a fixed length string from a binary file" begin
-        
-    BRAIN_MESH_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/surf/lh.tinysurface")
+
+    BRAIN_MESH_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/surf/lh.tinysurface")
     file_io = open(BRAIN_MESH_FILE, "r")
 
     @test Base.position(file_io) == 0
-    
+
     b1 = read(file_io, UInt8)
     b2 = read(file_io, UInt8)
     b3 = read(file_io, UInt8)

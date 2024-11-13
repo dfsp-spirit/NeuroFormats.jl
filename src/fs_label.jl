@@ -47,7 +47,7 @@ function read_label(file::AbstractString)
     csv_data_reader = CSV.File(file; header=column_names, delim=" ", ignorerepeated=true, skipto=3, limit=num_vertices, types=column_types, comment="#")
 
     df = DataFrame(csv_data_reader)
-    return(df)
+    return df
 end
 
 """

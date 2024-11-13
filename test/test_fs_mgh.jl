@@ -3,7 +3,7 @@
 
 @testset "Read a 3D/4D FreeSurfer MGH file." begin
 
-    MGH_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/mri/brain.mgz")
+    MGH_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/mri/brain.mgz")
     mgh = read_mgh(MGH_FILE)
 
     # Test header.
@@ -31,7 +31,7 @@ end
 
 @testset "Compute vox2ras matrix for MGH file." begin
 
-    MGH_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/mri/brain.mgz")
+    MGH_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/mri/brain.mgz")
     mgh = read_mgh(MGH_FILE)
 
     # Use FreeSurfer's `mri_info` command line tool on the brain.mgz file to get this info:
@@ -45,9 +45,9 @@ end
 
 @testset "fs_mgh.jl: write and re-read MGH file uncompressed" begin
 
-    MGH_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/mri/brain.mgz")
+    MGH_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/mri/brain.mgz")
     mgh = read_mgh(MGH_FILE)
-    
+
     # Write and re-read
     tf = tempname()
     write_mgh(tf, mgh, format = "mgh")
@@ -81,15 +81,15 @@ end
     @test mgh_re.data[110, 110, 110, 1] == 71
     @test mgh_re.data[1, 1, 1, 1] == 0
     @test sum(Int32.(mgh_re.data)) == 121035479
-    
+
 end
 
 
 @testset "fs_mgh.jl: write and re-read MGZ file compressed" begin
 
-    MGH_FILE = joinpath(get_testdata_dir(), "subjects_dir/subject1/mri/brain.mgz")
+    MGH_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/mri/brain.mgz")
     mgh = read_mgh(MGH_FILE)
-    
+
     # Write and re-read
     tf = tempname()
     write_mgh(tf, mgh, format = "mgz")
@@ -122,6 +122,6 @@ end
     @test mgh_re.data[100, 100, 100, 1] == 77   # try on command line: mri_info --voxel 99 99 99 test/data/subjects_dir/subject1/mri/brain.mgz
     @test mgh_re.data[110, 110, 110, 1] == 71
     @test mgh_re.data[1, 1, 1, 1] == 0
-    @test sum(Int32.(mgh_re.data)) == 121035479    
+    @test sum(Int32.(mgh_re.data)) == 121035479
 end
 
