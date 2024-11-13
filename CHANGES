@@ -1,6 +1,12 @@
 NeuroFormats.jl Changes
 =======================
 
+
+Version 0.3.1
+-------------
+- Merge pull request by @JakobAsslaender that updates the compat and cleaned up the test code. Thanks for the contribution!
+
+
 Version 0.3.0
 --------------
 - Add `write_label` function that can write a label dataframe to a FreeSurfer label file.
