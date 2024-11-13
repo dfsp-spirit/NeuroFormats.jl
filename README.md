@@ -26,6 +26,7 @@ This package is not under heavy development anymore, but that does not mean that
 
 ## News
 
+* 2024-11-0613: We just released version 0.3.1 of NeuroFormats. This version has updated compatibility entries to work with more recent versions of its dependencies and some improvements to the test code. See the [CHANGES](./CHANGES) for more details. Thanks to @JakobAsslaender for contributions.
 * 2023-07-06: We just released version 0.3.0 of NeuroFormats. This version has been updated for recent Julia versions and works with Julia 1.9. It also adds support for writing label files. See the [CHANGES](./CHANGES) for more details.
 
 ## Installation
