@@ -1,6 +1,7 @@
 module FreeSurfer
 
 using Printf
+import ..MAX_ALLOCATION_BYTES
 
 export read_curv, write_curv, Curv, CurvHeader
 export read_surf, num_vertices, num_faces, export_to_obj, BrainMesh, FsSurface, FsSurfaceHeader

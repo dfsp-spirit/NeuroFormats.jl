@@ -1,5 +1,7 @@
 module DTI
 
+import ..MAX_ALLOCATION_BYTES
+
 export read_trk, DtiTrk, DtiTrkHeader
 export read_tck, DtiTck, DtiTrack
 

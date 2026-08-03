@@ -73,15 +73,32 @@ function read_trk(file::AbstractString)
     io = open(file, "r")
     header = _read_trk_header(io, endian)
 
+    if header.n_count < 0
+        error("Invalid TRK header: n_count = $(header.n_count) (must be >= 0)")
+    end
+    _check_alloc(header.n_count, sizeof(DtiTrack), "TRK track array ($(header.n_count) tracks)")
+
+    # Validate floating-point header fields are finite
+    for field_name in ["voxel_origin", "vox2ras", "image_orientation_patient"]
+        field_val = getfield(header, Symbol(field_name))
+        if any(.!isfinite.(field_val))
+            error("Invalid TRK header: $field_name contains NaN or Inf values")
+        end
+    end
+
     tracks = Array{DtiTrack,1}(undef, header.n_count)
     if header.n_count > 0
         for track_idx in [1:header.n_count;]
             num_points = Int32(endian_func(read(io, Int32)))
+            if num_points < 0
+                error("Invalid TRK file: track $track_idx has negative num_points = $num_points")
+            end
             #@printf("Reading track %d of %d with %d points, %d scalars and %d properties.\n", track_idx, header.n_count, num_points, header.n_scalars, header.n_properties)
-            
+
             if num_points > 0
-                track_point_coords = Base.reshape(zeros(Float32, num_points * 3), (3, num_points))' # gets filled below.
-                track_point_scalars = zeros(Float32, num_points * header.n_scalars) # gets filled below.
+                _check_alloc(num_points, sizeof(Float32) * 3, "TRK track $track_idx point coords ($num_points points)")
+                track_point_coords = Base.reshape(zeros(Float32, Int64(num_points) * 3), (3, Int(num_points)))' # gets filled below.
+                track_point_scalars = zeros(Float32, Int64(num_points) * header.n_scalars) # gets filled below.
                 for point_idx in [1:num_points;]
                     track_point_coords[point_idx,:] = _read_vector_endian(io, Float32, 3, endian=endian)
                     if header.n_scalars > 0

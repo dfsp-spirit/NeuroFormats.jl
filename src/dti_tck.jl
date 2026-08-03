@@ -37,7 +37,16 @@ function read_tck(file::AbstractString)
     dtype_bytes::Int64 = (dtype == Float64 ? 8 : 4)
     endian = derived["endian"]
     endian_func = (endian == "little" ? Base.ltoh : Base.ntoh)
-    num_to_read::Int64 = (filesize(file) - data_offset) / dtype_bytes 
+    num_to_read::Int64 = (filesize(file) - data_offset) / dtype_bytes
+
+    if num_tracks < 0
+        error("Invalid TCK header: count = $num_tracks (must be >= 0)")
+    end
+    _check_alloc(num_tracks, sizeof(DtiTrack), "TCK track array ($num_tracks tracks)")
+    if num_to_read <= 0
+        error("Invalid TCK file: computed data size is $num_to_read elements (filesize=$(filesize(file)), data_offset=$data_offset). Check the 'file' header field.")
+    end
+    _check_alloc(num_to_read, dtype_bytes, "TCK raw track data ($num_to_read elements)")
 
     io::IO = open(file, "r")
     seek(io, data_offset)
@@ -67,7 +76,7 @@ function read_tck(file::AbstractString)
         else
             append!(current_track_point_coords, track_matrix[row_idx,:]) # in track, just add current points coords.
         end
-    end    
+    end
 
     tck = DtiTck(header, tracks)
     return(tck)
@@ -80,10 +89,10 @@ struct TrkHeaderInfo
 end
 
 
-""" 
+"""
     _read_tck_header(io::IO)
 
-Read the ASCII header part of a TCK file and return it as a dictionary. 
+Read the ASCII header part of a TCK file and return it as a dictionary.
 
 The header can contain arbitrary extra fields in addition to the required once, so we cannot use a struct. This function derives
 some information from the raw header data and stores it in a sub dictionary under the key 'derived'.
@@ -124,17 +133,17 @@ function _read_tck_header(file::AbstractString)
     # Perform some sanity checks
     valid_datatypes::Array{String,1} = ["Float32BE", "Float32LE", "Float64BE", "Float64LE"];
 
-    if ! (header["datatype"] in valid_datatypes) 
+    if ! (header["datatype"] in valid_datatypes)
         error("Invalid datatype in TCK file header");
     end
-    
-    # Determine endianness of following binary data. 
-    if endswith(header["datatype"], "BE") 
+
+    # Determine endianness of following binary data.
+    if endswith(header["datatype"], "BE")
         derived["endian"] = "big"
     else
         derived["endian"] = "little";
     end
 
     thi = TrkHeaderInfo(header, derived)
-    return(thi) 
+    return(thi)
 end

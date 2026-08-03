@@ -23,7 +23,7 @@ function _read_fixed_length_string(io::IO, num_chars::Integer; strip_trailing::A
     str_bytes = Array{UInt8,1}(zeros(num_chars))
     readbytes!(io, str_bytes)
     str = String(str_bytes)
-    
+
     for suffix in strip_trailing
         if Base.endswith(str, suffix)
                 str = str[1:(Base.length(str) - Base.length(suffix))]
@@ -59,5 +59,26 @@ function _read_vector_endian(io::IO, T::Type, n::Integer; endian::AbstractString
     raw_data::Array{T,1} = reinterpret(T, read(io, sizeof(T) * n))
     raw_data .= endian_func.(raw_data)
     return raw_data
+end
+
+
+"""
+    _check_alloc(num_elements, element_size, context)
+
+Internal function to validate that an allocation of `num_elements` items of `element_size`
+bytes each does not exceed the global `MAX_ALLOCATION_BYTES` limit and is non-negative.
+Raises an error otherwise.
+"""
+function _check_alloc(num_elements::Integer, element_size::Integer, context::AbstractString="")
+    total::Int64 = Int64(num_elements) * Int64(element_size)
+    if total <= 0 && num_elements != 0
+        error("Invalid allocation size ($context): $num_elements elements of $element_size bytes each results in $total bytes. The file header may contain invalid (negative/zero/overflow) values.")
+    end
+    if total > MAX_ALLOCATION_BYTES[]
+        max_mib = MAX_ALLOCATION_BYTES[] / (1024 * 1024)
+        total_mib = total / (1024 * 1024)
+        error("Requested allocation of $(round(total_mib, digits=1)) MiB ($context) exceeds the maximum allowed ($(round(max_mib, digits=1)) MiB). Call NeuroFormats.set_max_allocation!(bytes) to increase the limit.")
+    end
+    return nothing
 end
 

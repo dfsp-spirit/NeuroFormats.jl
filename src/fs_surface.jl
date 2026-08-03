@@ -63,7 +63,7 @@ function _read_surf_header(io::IO)
 end
 
 
-""" 
+"""
     read_surf(file::AbstractString)
 
 Read a brain surface model represented as a mesh from a file in FreeSurfer binary surface format. Such a file typically represents a single hemisphere. Returns an [`FsSurface`](@ref) struct.
@@ -79,16 +79,24 @@ function read_surf(file::AbstractString)
     file_io = open(file, "r")
     header = _read_surf_header(file_io)
 
-    vertices_raw = _read_vector_endian(file_io, Float32, (header.num_vertices * 3), endian="big")
+    if header.num_vertices < 0
+        error("Invalid surface file: num_vertices = $(header.num_vertices) (must be >= 0)")
+    end
+    if header.num_faces < 0
+        error("Invalid surface file: num_faces = $(header.num_faces) (must be >= 0)")
+    end
+    _check_alloc(header.num_vertices, sizeof(Float32) * 3, "surface vertices ($(header.num_vertices) vertices × 3 coords)")
+    _check_alloc(header.num_faces, sizeof(Int32) * 3, "surface faces ($(header.num_faces) faces × 3 indices)")
+    vertices_raw = _read_vector_endian(file_io, Float32, Int64(header.num_vertices) * 3, endian="big")
     vertices::Array{Float32,2} = Base.reshape(vertices_raw, (3, Base.length(vertices_raw)÷3))'
 
-    faces_raw = _read_vector_endian(file_io, Int32, header.num_faces * 3, endian="big")
+    faces_raw = _read_vector_endian(file_io, Int32, Int64(header.num_faces) * 3, endian="big")
     faces::Array{Int32,2} = Base.reshape(faces_raw, (3, Base.length(faces_raw)÷3))'
 
     close(file_io)
 
     surface = FsSurface(header, BrainMesh(vertices, faces))
-    surface 
+    surface
 end
 
 

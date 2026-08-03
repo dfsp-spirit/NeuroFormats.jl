@@ -34,7 +34,7 @@ Return the brain region names of the [`FsAnnot`](@ref) surface annotation.
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
 julia> regions(annot) # show all regions
-``` 
+```
 """
 regions(annot::FsAnnot) = annot.colortable.name
 
@@ -49,7 +49,7 @@ Compute the region names for all vertices in an [`FsAnnot`](@ref) brain surface 
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
 julia> vertex_regions(annot) # show for each vertex the brain region it is part of.
-``` 
+```
 """
 function vertex_regions(annot::FsAnnot)
     vrc = Array{String,1}(undef, Base.length(annot.vertex_indices))
@@ -73,7 +73,7 @@ Examples
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
 julia> vertex_colors(annot) # show the color for each vertex.
-``` 
+```
 """
 function vertex_colors(annot::FsAnnot)
    vc = Array{Colors.RGB,1}(undef, Base.length(annot.vertex_indices))
@@ -89,7 +89,7 @@ end
 
 
 
-""" 
+"""
     region_vertices(annot::FsAnnot, region::String)
 
 Get all vertices of a region in an [`FsAnnot`](@ref) brain surface parcellation. Returns an integer vector, the vertex indices.
@@ -99,7 +99,7 @@ Get all vertices of a region in an [`FsAnnot`](@ref) brain surface parcellation.
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
 julia> region_vertices(annot, "bankssts") # show all vertices which are part of bankssts region.
-``` 
+```
 """
 function region_vertices(annot::FsAnnot, region::String)
     region_idx = findfirst(x -> (x == region), annot.colortable.name)
@@ -119,7 +119,7 @@ Compute the label from the color code of an [`FsAnnot`](@ref) brain region. Retu
 julia> annot_file = joinpath(tdd(), "subjects_dir/subject1/label/lh.aparc.annot");
 julia> annot = read_annot(annot_file);
 julia> label_from_rgb(annot.colortable.r[1], annot.colortable.g[1], annot.colortable.b[1])
-``` 
+```
 """
 label_from_rgb(r::Integer, g::Integer, b::Integer, a::Integer=0) = r + g*2^8 + b*2^16 + a*2^24
 
@@ -132,7 +132,7 @@ non-overlapping regions, based on a brain atlas. FreeSurfer parcellations assign
 each vertex of the mesh representing the reconstructed cortex.
 
 See also: [`read_surf`](@ref) to read the mesh that belongs the parcellation, and [`read_curv`](@ref) to read per-vertex
-data for the mesh or brain region vertices. Also see the convenience functions [`regions`](@ref), [`region_vertices`](@ref), [`label_from_rgb`](@ref), [`vertex_colors`](@ref) 
+data for the mesh or brain region vertices. Also see the convenience functions [`regions`](@ref), [`region_vertices`](@ref), [`label_from_rgb`](@ref), [`vertex_colors`](@ref)
 and [`vertex_regions`](@ref) to work with `FsAnnot` structs.
 
 Returns an [`FsAnnot`](@ref) struct.
@@ -148,9 +148,13 @@ julia> Base.length(region_vertices(annot, "bankssts")) # show vertex count of ba
 function read_annot(file::AbstractString)
     file_io = open(file, "r")
     num_vertices = Int32(hton(read(file_io, Int32)))
+    if num_vertices < 0
+        error("Invalid annot file: num_vertices = $num_vertices (must be >= 0)")
+    end
+    _check_alloc(num_vertices, sizeof(Int32) * 2, "annotation vertex data ($num_vertices vertices × 2 ints)")
 
     # The data is saved as a vertex index followed by its label label. This is repeated for all vertices.
-    vertices_and_labels_raw = _read_vector_endian(file_io, Int32, num_vertices * 2, endian="big")
+    vertices_and_labels_raw = _read_vector_endian(file_io, Int32, Int64(num_vertices) * 2, endian="big")
 
     # Separate vertices from labels
     vertices = vertices_and_labels_raw[[1:2:Base.length(vertices_and_labels_raw);]]

@@ -36,7 +36,7 @@ function _read_curv_header(io::IO)
 end
 
 
-""" 
+"""
     read_curv(file::AbstractString; with_header::Bool=false)
 
 Read per-vertex data for brain meshes from the Curv file `file`. The file must be in FreeSurfer binary `Curv` format, like `lh.thickness`. Returns an Array{Float32,1} with the data unless `with_header` is set, in which case a [`Curv`](@ref) struct is returned instead.
@@ -53,9 +53,13 @@ julia> sum(curv)/length(curv) # show mean cortical thickness
 function read_curv(file::AbstractString; with_header::Bool=false)
     file_io = open(file, "r")
     header = _read_curv_header(file_io)
-    
+
+    if header.num_vertices < 0
+        error("Invalid curv file: num_vertices = $(header.num_vertices) (must be >= 0)")
+    end
+    _check_alloc(header.num_vertices, sizeof(Float32), "curv per-vertex data ($(header.num_vertices) vertices)")
     per_vertex_data = _read_vector_endian(file_io, Float32, header.num_vertices, endian="big")
-              
+
     close(file_io)
 
     if with_header
@@ -86,7 +90,7 @@ function write_curv(file::AbstractString, curv_data::Vector{<:Number})
     curv_data = convert(Vector{Float32}, curv_data)
     header = CurvHeader(0xff, 0xff, 0xff, length(curv_data), 0, 1)
     file_io =  open(file, "w")
-    
+
     # Write header
     write(file_io, ntoh(header.curv_magic_b1))
     write(file_io, ntoh(header.curv_magic_b2))
@@ -100,6 +104,6 @@ function write_curv(file::AbstractString, curv_data::Vector{<:Number})
         write(file_io, ntoh(curv_data[idx]))
     end
 
-    close(file_io) 
+    close(file_io)
 end
 

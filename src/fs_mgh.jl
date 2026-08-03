@@ -53,8 +53,15 @@ function read_mgh(file::AbstractString)
     io = is_mgz ? CodecZlib.GzipDecompressorStream(io) : io
     header = _read_mgh_header(io::IO)
 
-    num_voxels = header.ndim1 * header.ndim2 * header.ndim3 * header.ndim4
+    # Validate dimensions and check allocation size
+    for (dim_name, dim_val) in [("ndim1", header.ndim1), ("ndim2", header.ndim2), ("ndim3", header.ndim3), ("ndim4", header.ndim4)]
+        if dim_val < 1
+            error("Invalid MGH header: $dim_name = $dim_val (must be >= 1)")
+        end
+    end
+    num_voxels = Int64(header.ndim1) * Int64(header.ndim2) * Int64(header.ndim3) * Int64(header.ndim4)
     dtype = mri_dtype_types[header.dtype]
+    _check_alloc(num_voxels, sizeof(dtype), "MGH voxel data ($(header.ndim1)×$(header.ndim2)×$(header.ndim3)×$(header.ndim4))")
     data_raw::Array{dtype, 1} = _read_vector_endian(io, dtype, num_voxels, endian = endian)
     data::Array{dtype, 4} = Base.reshape(data_raw, (header.ndim1, header.ndim2, header.ndim3, header.ndim4))
     return(Mgh(header, data))
@@ -187,7 +194,7 @@ function write_mgh(file::AbstractString, mgh::Mgh; format::AbstractString = "aut
     if is_gz
         file_io = TranscodingStream(GzipCompressor(), file_io)
     end
-    
+
     # Write header
     write(file_io, ntoh(mgh.header.mgh_version))
     write(file_io, ntoh(mgh.header.ndim1))
@@ -227,5 +234,5 @@ function write_mgh(file::AbstractString, mgh::Mgh; format::AbstractString = "aut
         write(file_io, ntoh(mgh.data[idx]))
     end
 
-    close(file_io) 
+    close(file_io)
 end
