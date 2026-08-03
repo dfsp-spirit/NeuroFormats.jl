@@ -1,6 +1,14 @@
 NeuroFormats.jl Changes
 =======================
 
+Version 0.3.2
+-------------
+- NEW: add support for writing annot files
+- NEW: add support for writing surface files
+- NEW: add support for reading and writing .w files
+- SEC: allow setting max alloc limits
+- SEC: validate float header fields for NAN/Inf/etc.
+
 
 Version 0.3.1
 -------------
