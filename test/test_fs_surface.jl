@@ -37,3 +37,24 @@ end
     fs = open(tf, "r")
     @test Base.length(readlines(fs)) == 5 + 3
 end
+
+
+@testset "fs_surface.jl: write and re-read brain mesh (roundtrip)" begin
+
+    BRAIN_MESH_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/surf/lh.tinysurface")
+    surface_orig = read_surf(BRAIN_MESH_FILE)
+
+    tf = string(tempname(), ".surf")
+    write_surf(tf, surface_orig)
+    @test Base.isfile(tf)
+
+    surface_read = read_surf(tf)
+
+    # Compare header fields
+    @test surface_read.header.num_vertices == surface_orig.header.num_vertices
+    @test surface_read.header.num_faces == surface_orig.header.num_faces
+
+    # Compare mesh data
+    @test surface_read.mesh.vertices == surface_orig.mesh.vertices
+    @test surface_read.mesh.faces == surface_orig.mesh.faces
+end

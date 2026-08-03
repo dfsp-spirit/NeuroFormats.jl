@@ -34,3 +34,33 @@ end
 
     @test Base.length(vertex_colors(fs_annot)) == 149244
 end
+
+
+@testset "Write and re-read a FreeSurfer annotation (roundtrip)" begin
+
+    ANNOT_FILE = joinpath(Base.source_dir(), "data/subjects_dir/subject1/label/lh.aparc.annot")
+    annot_orig = read_annot(ANNOT_FILE)
+
+    tf = string(tempname(), ".annot")
+    write_annot(tf, annot_orig)
+    @test Base.isfile(tf)
+
+    annot_read = read_annot(tf)
+
+    # Compare vertex data
+    @test annot_read.vertex_indices == annot_orig.vertex_indices
+    @test annot_read.vertex_labels == annot_orig.vertex_labels
+
+    # Compare ColorTable
+    @test annot_read.colortable.id == annot_orig.colortable.id
+    @test annot_read.colortable.name == annot_orig.colortable.name
+    @test annot_read.colortable.r == annot_orig.colortable.r
+    @test annot_read.colortable.g == annot_orig.colortable.g
+    @test annot_read.colortable.b == annot_orig.colortable.b
+    @test annot_read.colortable.a == annot_orig.colortable.a
+    @test annot_read.colortable.label == annot_orig.colortable.label
+
+    # Verify the high-level API still works on the re-read data
+    @test Base.length(regions(annot_read)) == 36
+    @test Base.length(region_vertices(annot_read, "bankssts")) == 1722
+end

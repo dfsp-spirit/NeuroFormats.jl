@@ -212,3 +212,71 @@ function _read_annot_colortable(file_io::IO, num_ColorTable_entries::Int32)
     ct = ColorTable(id, name, r, g, b, a, label)
     return ct
 end
+
+
+"""
+    write_annot(file::AbstractString, annot::FsAnnot)
+
+Write a FreeSurfer brain surface parcellation to a binary annot file.
+
+The file will be written in the modern ColorTable format (version 2), which is the
+format used by current FreeSurfer versions.
+
+See also: [`read_annot`](@ref)
+
+# Examples
+```julia-repl
+julia> annot_file = joinpath(tdd(), \"subjects_dir/subject1/label/lh.aparc.annot\");
+julia> annot = read_annot(annot_file);
+julia> write_annot(\"/tmp/test.annot\", annot);
+```
+"""
+function write_annot(file::AbstractString, annot::FsAnnot)
+    file_io = open(file, "w")
+
+    # Write number of vertices
+    num_vertices = Int32(length(annot.vertex_indices))
+    write(file_io, ntoh(num_vertices))
+
+    # Write interleaved vertex index + label pairs
+    for idx in 1:num_vertices
+        write(file_io, ntoh(annot.vertex_indices[idx]))
+        write(file_io, ntoh(annot.vertex_labels[idx]))
+    end
+
+    # Write ColorTable presence flag
+    write(file_io, ntoh(Int32(1)))  # has_ColorTable = true
+
+    # Write ColorTable version (negative value: -2 = version 2)
+    write(file_io, ntoh(Int32(-2)))
+
+    # Write number of ColorTable entries
+    num_entries = Int32(length(annot.colortable.id))
+    write(file_io, ntoh(num_entries))
+
+    # Write original filename (we write an empty string)
+    write(file_io, ntoh(Int32(0)))  # num_chars_orig_filename = 0
+
+    # Write ColorTable entry count again (duplicated in the format)
+    write(file_io, ntoh(num_entries))
+
+    # Write each ColorTable entry
+    for idx in 1:num_entries
+        # id is stored as 0-based in the file
+        write(file_io, ntoh(annot.colortable.id[idx] - Int32(1)))
+
+        # Entry name as length-prefixed string (no null terminator)
+        entry_name = annot.colortable.name[idx]
+        name_bytes = Vector{UInt8}(entry_name)
+        write(file_io, ntoh(Int32(length(name_bytes))))
+        write(file_io, name_bytes)
+
+        # Color components
+        write(file_io, ntoh(annot.colortable.r[idx]))
+        write(file_io, ntoh(annot.colortable.g[idx]))
+        write(file_io, ntoh(annot.colortable.b[idx]))
+        write(file_io, ntoh(annot.colortable.a[idx]))
+    end
+
+    close(file_io)
+end

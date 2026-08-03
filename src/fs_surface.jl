@@ -148,3 +148,56 @@ julia> export_to_obj(tempname(), surf)
 """
 export_to_obj(file:: AbstractString, x::FsSurface) = export_to_obj(file, x.mesh)
 
+
+"""
+    write_surf(file::AbstractString, surf::FsSurface)
+
+Write a brain surface mesh to a file in FreeSurfer binary surface format.
+
+This is the inverse of [`read_surf`](@ref).  The output file will be compatible with
+FreeSurfer tools that read binary surface files (e.g., `mris_convert`, `tksurfer`).
+
+See also: [`read_surf`](@ref), [`export_to_obj`](@ref)
+
+# Examples
+```julia-repl
+julia> surf_file = joinpath(tdd(), \"subjects_dir/subject1/surf/lh.white\");
+julia> surf = read_surf(surf_file);
+julia> write_surf(\"/tmp/lh.white\", surf);
+```
+"""
+function write_surf(file::AbstractString, surf::FsSurface)
+    file_io = open(file, "w")
+
+    # Write magic bytes (TRIS_MAGIC_FILE_TYPE_NUMBER = 16777214 = 0xFFFFFE)
+    write(file_io, ntoh(surf.header.magic_b1))
+    write(file_io, ntoh(surf.header.magic_b2))
+    write(file_io, ntoh(surf.header.magic_b3))
+
+    # Write info line as raw bytes — no explicit null terminator needed:
+    # the first 0x00 byte of the following big-endian Int32 serves as the
+    # implicit null terminator that read_variable_length_string expects.
+    info_bytes = Vector{UInt8}(surf.header.info_line)
+    write(file_io, info_bytes)
+
+    # Write vertex and face counts
+    write(file_io, ntoh(surf.header.num_vertices))
+    write(file_io, ntoh(surf.header.num_faces))
+
+    # Write vertices (n × 3 Float32, row-major, big-endian)
+    for row_idx in 1:size(surf.mesh.vertices, 1)
+        for col_idx in 1:3
+            write(file_io, ntoh(surf.mesh.vertices[row_idx, col_idx]))
+        end
+    end
+
+    # Write faces (n × 3 Int32, row-major, big-endian, 0-based)
+    for row_idx in 1:size(surf.mesh.faces, 1)
+        for col_idx in 1:3
+            write(file_io, ntoh(surf.mesh.faces[row_idx, col_idx]))
+        end
+    end
+
+    close(file_io)
+end
+

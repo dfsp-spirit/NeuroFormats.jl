@@ -16,9 +16,10 @@ This package is not under heavy development anymore, but that does not mean that
 ## Features
 
 * Read and write FreeSurfer per-vertex data in curv format (like `subject/surf/lh.thickness`): functions `read_curv()` and `write_curv()`
-* Read brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`): `read_surf()`
+* Read and write FreeSurfer per-vertex integer paint data in W format (like `subject/surf/lh.cortex.paint`): functions `read_w()` and `write_w()`
+* Read and write brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`): `read_surf()` and `write_surf()`
 * Read and write FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_label()` and `write_label()`
-* Read FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_annot()`
+* Read and write FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_annot()` and `write_annot()`
 * Read and write FreeSurfer MGH and MGZ brain volumes (4D voxel images, like `subject/mri/brain.mgz`): `read_mgh()` and `write_mgh()`
 * Read DTI track data from [MRtrix3](https://www.mrtrix.org/) TCK files: `read_tck()`
 * Read DTI track data from [DiffusionToolkit](http://trackvis.org/dtk/) TRK files: `read_trk()`
