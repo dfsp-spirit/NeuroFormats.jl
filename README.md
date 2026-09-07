@@ -9,9 +9,8 @@ Handling of structural neuroimaging file formats for [Julia](https://julialang.o
 
 The NeuroFormats package provides an API for reading structural neuroimaging data files in Julia. The focus is on surface-based data, as produced by [FreeSurfer](https://freesurfer.net). The aim of the package is to allow scientists to access their neuroimaging data in Julia so they can use the language's power to implement custom data analysis pipelines.
 
-Note that some functions for reading neuroimaging data files are available from [JuliaNeuroscience](https://github.com/JuliaNeuroscience), e.g., [NIFTI volume](https://github.com/JuliaNeuroscience/NIfTI.jl) and [GIFTI mesh](https://github.com/JuliaNeuroscience/GIFTI.jl) support. This package does not duplicate these functionalities.
+Note that this package also provides its own support for reading and writing structural brain volumes in [NIfTI-1 format](https://nifti.nimh.nih.gov/), see below. This allows a seamless conversion to and from the FreeSurfer MGH/MGZ formats, and both the s-form and the q-form of the NIfTI header are fully supported. For related formats that are not covered by this package, e.g., GIFTI meshes, other packages from [JuliaNeuroscience](https://github.com/JuliaNeuroscience) are available.
 
-This package is not under heavy development anymore, but that does not mean that it is unmaintained. I consider it pretty feature-complete, and the file formats do not change. If you feel this package is missing an important format, please open an issue.
 
 ## Features
 
@@ -21,12 +20,14 @@ This package is not under heavy development anymore, but that does not mean that
 * Read and write FreeSurfer label files (like `subject/label/lh.cortex.label`): `read_label()` and `write_label()`
 * Read and write FreeSurfer brain surface parcellations (like `subject/label/lh.aparc.annot`): `read_annot()` and `write_annot()`
 * Read and write FreeSurfer MGH and MGZ brain volumes (4D voxel images, like `subject/mri/brain.mgz`): `read_mgh()` and `write_mgh()`
+* Read and write structural brain volumes in NIfTI-1 format (4D voxel images, like `subject/mri/brain.nii`): `read_nifti()` and `write_nifti()`
 * Read DTI track data from [MRtrix3](https://www.mrtrix.org/) TCK files: `read_tck()`
 * Read DTI track data from [DiffusionToolkit](http://trackvis.org/dtk/) TRK files: `read_trk()`
 
 
 ## News
 
+* 2026-09-07: Added native support for reading and writing NIfTI-1 brain volumes (`.nii` and `.nii.gz`) to NeuroFormats: `read_nifti()` and `write_nifti()`. The NIfTI voxel-to-world transform (s-form and q-form) is fully supported and converted to and from the FreeSurfer MGH RAS header fields, so MGH/MGZ and NIfTI files can be converted seamlessly. See the [CHANGES](./CHANGES) for more details.
 * 2026-08-01: We recently published version 0.3.2 of NeuroFormats. This version adds write support for many formats, and better security against malicious input files. See the [CHANGES](./CHANGES) for more details.
 * 2024-11-13: We just released version 0.3.1 of NeuroFormats. This version has updated compatibility entries to work with more recent versions of its dependencies and some improvements to the test code. See the [CHANGES](./CHANGES) for more details. Thanks to @JakobAsslaender for contributions.
 * 2023-07-06: We just released version 0.3.0 of NeuroFormats. This version has been updated for recent Julia versions and works with Julia 1.9. It also adds support for writing label files. See the [CHANGES](./CHANGES) for more details.
