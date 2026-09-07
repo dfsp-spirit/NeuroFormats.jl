@@ -7,6 +7,7 @@ export read_curv, write_curv, Curv, CurvHeader
 export read_surf, write_surf, num_vertices, num_faces, export_to_obj, BrainMesh, FsSurface, FsSurfaceHeader
 export read_label, write_label, read_annot, write_annot, FsAnnot, ColorTable, regions, vertex_regions, region_vertices, label_from_rgb, vertex_colors
 export read_mgh, Mgh, MghHeader, mgh_vox2ras, write_mgh
+export read_nifti, write_nifti, read_nifti_header, Nifti1Header
 export read_w, write_w, WFile, WHeader
 
 include("./utils.jl")
@@ -16,6 +17,7 @@ include("./fs_surface.jl")
 include("./fs_label.jl")
 include("./fs_annot.jl")
 include("./fs_mgh.jl")
+include("./fs_nifti.jl")
 include("./fs_w.jl")
 
 end

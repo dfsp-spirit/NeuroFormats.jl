@@ -1,6 +1,17 @@
 NeuroFormats.jl Changes
 =======================
 
+Version 0.4.0
+-------------
+- NEW: add support for reading and writing NIfTI-1 files (`.nii` and gzip-compressed `.nii.gz`):
+  `read_nifti`, `write_nifti` and `read_nifti_header`.
+- The NIfTI voxel-to-world transform (s-form preferred, q-form as fallback) is converted into the
+  FreeSurfer RAS header fields (`delta`, `mdc`, `p_xyz_c`), and vice versa, so that an MGH/MGZ and
+  the corresponding NIfTI file describe the same geometry. Both big- and little-endian NIfTI files
+  can be read; written files are big-endian.
+- Supported NIfTI data types: UINT8, INT16, INT32, FLOAT32 (the types the MGH volume model uses).
+
+
 Version 0.3.2
 -------------
 - NEW: add support for writing annot files
