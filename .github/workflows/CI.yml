@@ -5,10 +5,10 @@ on:
       - "LICENSE.md"
       - "README.md"
     branches:
-      - main
+      - main, develop
   pull_request:
     branches:
-      - main
+      - main, develop
 
 jobs:
   test:
