@@ -27,7 +27,7 @@ Note that this package also provides its own support for reading and writing str
 
 ## News
 
-* 2026-09-07: Added native support for reading and writing NIfTI-1 brain volumes (`.nii` and `.nii.gz`) to NeuroFormats: `read_nifti()` and `write_nifti()`. The NIfTI voxel-to-world transform (s-form and q-form) is fully supported and converted to and from the FreeSurfer MGH RAS header fields, so MGH/MGZ and NIfTI files can be converted seamlessly. See the [CHANGES](./CHANGES) for more details.
+* 2026-09-08: We just released version 0.4.0 of NeuroFormats. This adds native support for reading and writing NIfTI-1 brain volumes (`.nii` and `.nii.gz`) to NeuroFormats: `read_nifti()` and `write_nifti()`. The NIfTI voxel-to-world transform (s-form and q-form) is fully supported and converted to and from the FreeSurfer MGH RAS header fields, so MGH/MGZ and NIfTI files can be converted seamlessly. See the [CHANGES](./CHANGES) for more details.
 * 2026-08-01: We recently published version 0.3.2 of NeuroFormats. This version adds write support for many formats, and better security against malicious input files. See the [CHANGES](./CHANGES) for more details.
 * 2024-11-13: We just released version 0.3.1 of NeuroFormats. This version has updated compatibility entries to work with more recent versions of its dependencies and some improvements to the test code. See the [CHANGES](./CHANGES) for more details. Thanks to @JakobAsslaender for contributions.
 * 2023-07-06: We just released version 0.3.0 of NeuroFormats. This version has been updated for recent Julia versions and works with Julia 1.9. It also adds support for writing label files. See the [CHANGES](./CHANGES) for more details.
